@@ -24,14 +24,14 @@ h1{font:600 24px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.02em
 .shelf{position:relative;flex:1;display:flex;align-items:center;overflow-x:auto;scroll-snap-type:x mandatory;perspective:1300px;padding:0 calc(50% - 144px);scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .shelf::-webkit-scrollbar{display:none}
 .rec{flex:none;width:260px;height:260px;margin:0 14px;position:relative;scroll-snap-align:center;transform-style:preserve-3d}
-.vy{position:absolute;top:3%;left:6%;width:94%;height:94%;border-radius:50%;background:repeating-radial-gradient(circle,#0a0a0b 0 2px,#161618 3px 4px);box-shadow:0 10px 30px #000;transform:translateX(16%);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
-.vy::after{content:"";position:absolute;inset:36%;border-radius:50%;background:#c9a56b}
+.vy{position:absolute;top:3%;left:6%;width:94%;height:94%;border-radius:50%;background:repeating-radial-gradient(circle,var(--v1,#0a0a0b) 0 2px,var(--v2,#161618) 3px 4px);box-shadow:0 10px 30px #000;transform:translateX(16%);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.vy::after{content:"";position:absolute;inset:36%;border-radius:50%;background:var(--ring,#c9a56b)}
 .rec.out .vy{transform:translateX(78%)}
 .sl{position:absolute;inset:0;border-radius:6px;background-size:cover;background-position:center;box-shadow:0 22px 44px rgba(0,0,0,.75),inset 0 0 0 1px rgba(255,255,255,.1)}
 .cap{text-align:center;padding:0 24px 34px;min-height:84px}
 .cap b{display:block;font:600 21px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.01em}
 .cap span{color:#8e8e93}
-#deckV{background:radial-gradient(ellipse at 18% 6%,rgba(var(--lamp),.16),transparent 55%),#000}
+#deckV{background:radial-gradient(ellipse at 18% 6%,rgba(var(--lamp),var(--la,.16)),transparent 55%),#000}
 svg{flex:1;min-height:0;width:100%;touch-action:none}
 #arm.lift{filter:drop-shadow(14px 22px 12px rgba(0,0,0,.65))}
 #arm{filter:drop-shadow(5px 8px 5px rgba(0,0,0,.6));cursor:grab}
@@ -40,6 +40,30 @@ svg{flex:1;min-height:0;width:100%;touch-action:none}
 .info span{color:#8e8e93}
 .toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translate(-50%,20px);max-width:86vw;text-align:center;opacity:0;pointer-events:none;transition:.4s;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);padding:12px 18px;border-radius:16px;z-index:9}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+#hint{flex:1;text-align:center;color:#8e8e93;font-size:13px;padding:0 10px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:0 28px 6px}
+.tools input{flex:1;min-width:160px;max-width:340px;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);color:#f5f5f7;padding:9px 16px;border-radius:99px;font:400 14px -apple-system,sans-serif;outline:0;-webkit-user-select:text;user-select:text}
+.tools input::placeholder{color:#8e8e93}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 28px 8px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chips .pill{flex:none;white-space:nowrap}.pill.on{background:rgba(255,255,255,.92);color:#000}
+.shelf.grid{display:grid;grid-template-columns:repeat(auto-fill,190px);justify-content:center;gap:26px 34px;align-content:start;overflow-y:auto;overflow-x:hidden;scroll-snap-type:none;perspective:none;padding:22px 28px 28px;margin:4px 28px 18px;border-radius:22px;background:#0a0a0b;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 14px 30px rgba(0,0,0,.8)}
+.grid .rec{width:190px;height:190px;margin:0;transform:none!important;opacity:1!important}
+.grid .vy{transform:translateX(9%)}
+.shelf.grid+.cap{display:none}
+.cap i{display:block;font-style:normal;font-size:12px;margin-top:5px;cursor:pointer}
+
+.stage{flex:1;display:flex;min-height:0;gap:18px;padding:0 22px}
+.stage svg{flex:1;min-width:0;min-height:0;width:auto}
+.tracks{width:310px;flex:none;overflow-y:auto;padding:8px;margin-bottom:6px;border-radius:20px;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);scrollbar-width:none}
+.tracks:empty{display:none}.tracks::-webkit-scrollbar{display:none}
+.th{padding:12px 12px 4px;font:600 12px -apple-system,sans-serif;color:#8e8e93}
+.tr{display:flex;width:100%;gap:12px;align-items:center;text-align:left;background:none;border:0;color:#f5f5f7;padding:11px 12px;border-radius:12px;font:400 15px -apple-system,sans-serif}
+.tr:active{background:rgba(255,255,255,.08)}
+.tr.on{background:rgba(255,255,255,.13);box-shadow:inset 3px 0 0 var(--ring,#c9a56b)}
+.tr .n{width:22px;color:#8e8e93;text-align:right;font-variant-numeric:tabular-nums}
+.tr .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .d{color:#8e8e93;font-variant-numeric:tabular-nums;font-size:13px}
+@media(orientation:portrait){.stage{flex-direction:column;gap:8px}.tracks{width:auto;max-height:38%}}
 @media(prefers-reduced-motion:reduce){.view,.vy{transition-duration:.01s}}
 </style>
 </head>
@@ -47,18 +71,21 @@ svg{flex:1;min-height:0;width:100%;touch-action:none}
 
 <section class="view" id="shelfV">
   <div class="bar"><h1>VinylOS</h1><button class="pill" id="login">Conectar Spotify</button></div>
+  <div class="tools"><input id="q" type="search" placeholder="Buscar disco, artista o género"><button class="pill" id="srt">Orden: biblioteca</button><button class="pill" id="vw">Vista: Cover Flow</button></div>
+  <div class="chips" id="chips"></div>
   <div class="shelf" id="shelf"></div>
-  <div class="cap"><b id="cn"></b><span id="cs"></span></div>
+  <div class="cap"><b id="cn"></b><span id="cs"></span><i id="cg" title="Toca para cambiar el género"></i></div>
 </section>
 
 <section class="view off" id="deckV">
-  <div class="bar"><button class="pill" id="back">‹ Estantería</button><span style="color:#8e8e93" id="hint">Arrastra la aguja hasta el disco</span><button class="pill" id="crk">Crackle: sí</button></div>
-  <svg id="svg" viewBox="0 0 1000 760" preserveAspectRatio="xMidYMid meet">
+  <div class="bar"><button class="pill" id="back">‹ Estantería</button><span id="hint">Suelta la aguja en un surco o elige una pista</span><span style="display:flex;gap:8px"><button class="pill" id="sd">Lado A</button><button class="pill" id="rp">33 RPM</button><button class="pill" id="crk">Ambiente: sí</button></span></div>
+  <div class="stage"><svg id="svg" viewBox="0 0 1000 760" preserveAspectRatio="xMidYMid meet">
     <defs>
       <linearGradient id="pl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2c2c2f"/><stop offset="1" stop-color="#131315"/></linearGradient>
       <linearGradient id="mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8d8de"/><stop offset="1" stop-color="#7d7d84"/></linearGradient>
       <linearGradient id="sh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-      <radialGradient id="lamp" cx=".2" cy=".1" r=".95"><stop offset="0" stop-color="#ffaa5a" stop-opacity=".24"/><stop offset="1" stop-color="#ffaa5a" stop-opacity="0"/></radialGradient>
+      <radialGradient id="lamp" cx=".2" cy=".1" r=".95"><stop id="lampS" offset="0" stop-color="#ffaa5a" stop-opacity=".24"/><stop id="lampE" offset="1" stop-color="#ffaa5a" stop-opacity="0"/></radialGradient>
+      <filter id="bl"><feGaussianBlur stdDeviation="5"/></filter>
       <clipPath id="vc"><circle cx="380" cy="380" r="300"/></clipPath>
       <clipPath id="lc"><circle cx="380" cy="380" r="100"/></clipPath>
     </defs>
@@ -66,11 +93,13 @@ svg{flex:1;min-height:0;width:100%;touch-action:none}
     <rect x="20" y="20" width="960" height="720" rx="40" fill="url(#lamp)" pointer-events="none"/>
     <circle cx="380" cy="380" r="326" fill="#0c0c0d" stroke="#3a3a3e" stroke-width="3"/>
     <circle cx="380" cy="380" r="318" fill="url(#mt)" opacity=".25"/>
-    <g id="rec"><circle cx="380" cy="380" r="300" fill="#0b0b0c"/><g id="grooves" fill="none"></g>
+    <g id="strobe"></g>
+    <g id="rec"><circle id="vbase" cx="380" cy="380" r="300" fill="#0b0b0c"/><g id="grooves" fill="none"></g>
       <circle cx="380" cy="380" r="104" fill="#1c1c1e"/><image id="lab" x="280" y="280" width="200" height="200" preserveAspectRatio="xMidYMid slice" clip-path="url(#lc)"/>
-      <circle cx="380" cy="380" r="100" fill="none" stroke="rgba(255,255,255,.18)"/><circle cx="380" cy="380" r="8" fill="#e5e5ea"/></g>
-    <g clip-path="url(#vc)" pointer-events="none"><path d="M380 380 L520 90 L640 150 Z" fill="url(#sh)"/><path d="M380 380 L240 670 L120 610 Z" fill="url(#sh)"/><circle cx="380" cy="380" r="300" fill="url(#lamp)"/></g>
+      <circle id="lring" cx="380" cy="380" r="100" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2"/><text id="sdl" x="380" y="455" text-anchor="middle" font-family="-apple-system,Helvetica" font-weight="700" font-size="24" fill="#fff" stroke="rgba(0,0,0,.55)" stroke-width="4" paint-order="stroke"></text><circle cx="380" cy="380" r="8" fill="#e5e5ea"/></g>
+    <g id="sheen" clip-path="url(#vc)" pointer-events="none"><path d="M380 380 L520 90 L640 150 Z" fill="url(#sh)"/><path d="M380 380 L240 670 L120 610 Z" fill="url(#sh)"/><circle cx="380" cy="380" r="300" fill="url(#lamp)"/></g>
     <circle cx="693" cy="690" r="16" fill="#1c1c1e" stroke="#58585d" stroke-width="3"/>
+    <g id="ash" opacity=".4" filter="url(#bl)" pointer-events="none"><line x1="-40" y1="0" x2="480" y2="0" stroke="#000" stroke-width="9" stroke-linecap="round"/><g transform="translate(480 0) rotate(-14)"><rect x="0" y="-13" width="66" height="26" rx="6"/></g></g>
     <circle cx="860" cy="170" r="50" fill="#1d1d20" stroke="#3a3a3e" stroke-width="3"/>
     <g id="arm" transform="translate(860 170) rotate(108)">
       <rect x="-96" y="-19" width="56" height="38" rx="9" fill="#8e8e93"/>
@@ -79,7 +108,7 @@ svg{flex:1;min-height:0;width:100%;touch-action:none}
       <circle r="21" fill="url(#mt)"/>
       <line x1="-40" y1="0" x2="520" y2="0" stroke="transparent" stroke-width="80" id="hit"/>
     </g>
-  </svg>
+  </svg><div class="tracks" id="tracks"></div></div>
   <div class="info"><b id="in"></b><span id="is"></span></div>
 </section>
 
@@ -95,8 +124,23 @@ const $ = s => document.querySelector(s), NS = 'http://www.w3.org/2000/svg';
 const shelf = $('#shelf'), svg = $('#svg'), armEl = $('#arm');
 let toastT; const toast = m => { const e = $('#toast'); e.textContent = m; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 4200) };
 const cover = (n, h) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="${NS}" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h} 70% 55%)"/><stop offset="1" stop-color="hsl(${(h + 60) % 360} 60% 16%)"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><circle cx="142" cy="58" r="38" fill="rgba(255,255,255,.14)"/><text x="14" y="184" font-family="Helvetica" font-weight="700" font-size="19" fill="#fff">${n}</text></svg>`);
-const DEMO = [['Midnight Drive', 20], ['Blue Hour', 215], ['Paper Moon', 330], ['Desert Radio', 35], ['Low Light', 265], ['Velvet Room', 350], ['Sunday Rain', 190], ['Golden Tape', 48]]
-  .map(([n, h], i) => ({ id: 'd' + i, name: n, sub: 'Modo demo', img: cover(n, h) }));
+const DEMO = [['Midnight Drive', 20, 'urbano'], ['Blue Hour', 215, 'electro'], ['Paper Moon', 330, 'pop'], ['Desert Radio', 35, 'regional'], ['Low Light', 265, 'jazz'], ['Velvet Room', 350, 'urbano'], ['Sunday Rain', 190, 'rock'], ['Golden Tape', 48, 'hiphop']]
+  .map(([n, h, g], i) => ({ id: 'd' + i, name: n, artist: 'Demo', sub: 'Modo demo', img: cover(n, h), g, album: 1, total: 10 }));
+const TH = {   // cada género tiene su color de vinilo, aro y luz ambiental
+  urbano: { n: 'Reggaetón y urbano', v1: '#240a33', v2: '#3d1357', ring: '#ff2bd6', glow: '255,43,214' },
+  regional: { n: 'Regional mexicano', v1: '#2e1f0e', v2: '#4a3318', ring: '#e0b266', glow: '224,160,72' },
+  hiphop: { n: 'Hip hop y rap', v1: '#171309', v2: '#2b2410', ring: '#f5c542', glow: '245,197,66' },
+  pop: { n: 'Pop', v1: '#3a0f2a', v2: '#5a1a42', ring: '#ff7ab0', glow: '255,122,176' },
+  rock: { n: 'Rock y metal', v1: '#0b0b0c', v2: '#1c1c1e', ring: '#e5484d', glow: '229,72,77' },
+  electro: { n: 'Electrónica', v1: '#062235', v2: '#0b3a57', ring: '#35d0ff', glow: '53,208,255' },
+  jazz: { n: 'Jazz y clásica', v1: '#25160b', v2: '#3b2412', ring: '#c9a56b', glow: '255,170,90' },
+  otros: { n: 'Otros', v1: '#0b0b0c', v2: '#161618', ring: '#c9a56b', glow: '255,170,90' },
+  lista: { n: 'Playlists', v1: '#0b0b0c', v2: '#161618', ring: '#8e8e93', glow: '255,170,90' }
+};
+const RX = [['urbano', /reggaeton|urbano|dembow|perreo|latin trap|trap latino|trap argentino|trap chileno|latin hip hop/], ['regional', /corrido|regional mexican|norte[ñn]o|banda|mariachi|sierre[ñn]o|mexican/], ['hiphop', /hip hop|rap|trap/], ['pop', /pop/], ['rock', /rock|metal|punk|indie/], ['electro', /edm|electro|house|techno|dance|trance/], ['jazz', /jazz|classical|blues|soul|bossa/]];
+const classify = gs => (RX.find(([, r]) => r.test(gs.join(' ').toLowerCase())) || ['otros'])[0];
+const gOf = it => (PREF.gm && PREF.gm[it.id]) || it.g || 'otros';
+
 
 /* ============ SPOTIFY (OAuth PKCE + Web API) ============ */
 const AUTH = 'https://accounts.spotify.com/authorize', TOK = 'https://accounts.spotify.com/api/token';
@@ -126,56 +170,87 @@ async function api(path, o = {}) {
 async function loadSpotify() {
   const [p, al] = await Promise.all([api('/me/playlists?limit=30'), api('/me/albums?limit=30')]);
   items = [
-    ...al.items.map(({ album: x }) => ({ id: x.id, name: x.name, sub: x.artists.map(r => r.name).join(', '), img: x.images[0]?.url, uri: x.uri, album: 1, total: x.total_tracks })),
-    ...p.items.filter(Boolean).map(x => ({ id: x.id, name: x.name, sub: 'Playlist de ' + (x.owner?.display_name || 'Spotify'), img: x.images?.[0]?.url, uri: x.uri }))
-  ]; render();
+    ...al.items.map(({ album: x }) => ({ id: x.id, name: x.name, artist: x.artists[0]?.name || '', aid: x.artists[0]?.id, sub: x.artists.map(r => r.name).join(', '), img: x.images[0]?.url, uri: x.uri, album: 1, total: x.total_tracks, g: 'otros' })),
+    ...p.items.filter(Boolean).map(x => ({ id: x.id, name: x.name, artist: '~', sub: 'Playlist de ' + (x.owner?.display_name || 'Spotify'), img: x.images?.[0]?.url, uri: x.uri, g: 'lista', total: x.tracks?.total || x.items?.total || 0 }))
+  ]; demo = false; render();
+  try {   // los álbumes no traen género: se deduce del artista
+    const ids = [...new Set(items.filter(i => i.aid).map(i => i.aid))];
+    for (let k = 0; k < ids.length; k += 50) {
+      const r = await api('/artists?ids=' + ids.slice(k, k + 50).join(','));
+      r.artists.forEach(ar => items.forEach(i => { if (i.aid === ar.id) i.g = classify(ar.genres || []) }));
+    }
+    render();
+  } catch (e) {}
 }
 async function spPlay(resume) {
-  const body = resume ? undefined : JSON.stringify({ context_uri: cur.uri });
+  await pausing;
+  const pos = pickIdx != null ? pickIdx : (cur.album && side ? half() : 0);
+  const body = resume ? undefined : JSON.stringify({ context_uri: cur.uri, position_ms: 0, ...(pos ? { offset: { position: pos } } : {}) });
   try { await api('/me/player/play', { method: 'PUT', body }); }
   catch (e) {
     if (e.status === 404) {
       const d = (await api('/me/player/devices').catch(() => ({}))).devices || [];
       if (!d.length) { toast('Abre la app de Spotify en este iPad, reproduce algo un segundo y vuelve a soltar la aguja.'); return lift(true) }
-      await api('/me/player/play?device_id=' + d[0].id, { method: 'PUT', body }).catch(() => { toast('No se pudo iniciar la reproducción.'); lift(true) });
+      await api('/me/player/play?device_id=' + (d.find(x => x.is_active) || d[0]).id, { method: 'PUT', body }).catch(() => { toast('No se pudo iniciar la reproducción.'); lift(true) });
     } else { toast(e.status === 403 ? 'Spotify requiere una cuenta Premium para controlar la reproducción.' : 'Error de Spotify (' + e.status + ').'); lift(true) }
   }
 }
-const spPause = () => api('/me/player/pause', { method: 'PUT' }).catch(() => {});
+let pausing = Promise.resolve(), retried = false;
+const spPause = () => (pausing = api('/me/player/pause', { method: 'PUT' }).catch(() => {}));
 let sync = null, dropAt = 0;   // {p: ms, d: ms, n: pista, at: instante local}
 const progOf = () => {          // interpola entre consultas para mover el brazo con fluidez
   if (!sync) return prog;
-  const p = Math.min(1, (sync.p + performance.now() - sync.at) / sync.d);
-  return cur.album && cur.total ? ((sync.n - 1) + p) / cur.total : p;
+  const p = Math.min(1, (sync.p + performance.now() - sync.at) / sync.d), f0 = frac(sync.i), f1 = frac(sync.i + 1);
+  return Math.max(0, Math.min(1, f0 + p * (f1 - f0)));
 };
 async function poll() {
   if (demo || !playing || pending || !cur) return;
   try {
     const s = await api('/me/player'); if (!s.item) return;
-    const ok = s.is_playing && (!s.context || s.context.uri === cur.uri);
-    if (!ok) { if (performance.now() - dropAt > 4000) lift(true); return }
-    sync = { p: s.progress_ms, d: s.item.duration_ms, n: s.item.track_number, at: performance.now() };
+    const same = !s.context || s.context.uri === cur.uri, ok = s.is_playing && same, age = performance.now() - dropAt;
+    if (!ok) {
+      if (age < 4000) return;
+      if (same) return lift(true);                                   // pausado desde Spotify
+      if (!retried && age < 12000) { retried = true; return spPlay(false) }   // sigue sonando otro disco: reenviar
+      toast('Spotify no cambió de disco. Vuelve a soltar la aguja.'); return lift(age < 12000);
+    }
+    const ix = cur.tracks ? cur.tracks.findIndex(x => x.id === s.item.id) : -1, i = ix >= 0 ? ix : s.item.track_number - 1;
+    if (cur.album && nT() > 1 && !side && i >= half()) { lift(); toast('Fin del lado A. Toca «Lado A» para dar la vuelta al disco.'); return }
+    sync = { p: s.progress_ms, d: s.item.duration_ms, i, at: performance.now() };
   } catch (e) {}
 }
 setInterval(poll, 2500);
 
 /* ============ ESTANTERÍA ============ */
 let items = DEMO, recs = [], cur = null, demo = true;
+let vis = [], fG = 'all', sortM = 0, grid = PREF.grid || 0;
+const SORTS = ['biblioteca', 'artista A-Z', 'género'];
 function render() {
-  shelf.innerHTML = '';
-  items.forEach((it, i) => {
+  const q = $('#q').value.trim().toLowerCase();
+  vis = items.filter(it => (fG === 'all' || gOf(it) === fG) && (!q || (it.name + ' ' + it.sub + ' ' + TH[gOf(it)].n).toLowerCase().includes(q)));
+  if (sortM === 1) vis.sort((a, b) => (a.artist || '~').localeCompare(b.artist || '~') || a.name.localeCompare(b.name));
+  if (sortM === 2) vis.sort((a, b) => TH[gOf(a)].n.localeCompare(TH[gOf(b)].n));
+  shelf.classList.toggle('grid', !!grid); shelf.innerHTML = '';
+  vis.forEach((it, i) => {
     it.img = it.img || cover(it.name, i * 47 % 360);
-    const r = document.createElement('div'); r.className = 'rec';
+    const T = TH[gOf(it)], r = document.createElement('div'); r.className = 'rec';
     r.innerHTML = '<div class="vy"></div><div class="sl"></div>';
+    r.firstChild.style.cssText = `--v1:${T.v1};--v2:${T.v2};--ring:${T.ring}`;
     r.lastChild.style.backgroundImage = `url("${it.img}")`;
     r.onclick = () => click(i); shelf.append(r);
   });
-  recs = [...shelf.children];
-  const k = items.findIndex(x => x.id === PREF.last);
-  shelf.scrollLeft = k > 0 ? recs[k].offsetLeft + 130 - shelf.clientWidth / 2 : 0; requestAnimationFrame(fx);
+  recs = [...shelf.children]; shelf.scrollLeft = 0; shelf.scrollTop = 0;
+  const k = vis.findIndex(x => x.id === PREF.last);
+  if (k > 0 && !grid) shelf.scrollLeft = recs[k].offsetLeft + 130 - shelf.clientWidth / 2;
+  chips(); requestAnimationFrame(fx);
+}
+function chips() {
+  const gs = ['all', ...Object.keys(TH).filter(k => items.some(i => gOf(i) === k))], c = $('#chips'); c.innerHTML = '';
+  gs.forEach(k => { const b = document.createElement('button'); b.className = 'pill' + (k === fG ? ' on' : ''); b.textContent = k === 'all' ? 'Todos' : TH[k].n; b.onclick = () => { fG = k; render() }; c.append(b) });
 }
 let focus = 0;
 function fx() {
+  if (grid) return;
   const c = shelf.scrollLeft + shelf.clientWidth / 2; let bd = 1e9;
   recs.forEach((r, i) => {
     const d = (r.offsetLeft + 130 - c) / 288, a = Math.abs(d), s = Math.max(-1, Math.min(1, d));
@@ -183,14 +258,14 @@ function fx() {
     r.style.opacity = 1 - Math.min(a, 2.5) * .18;
     if (a < bd) { bd = a; focus = i }
   });
-  const it = items[focus]; if (it) { $('#cn').textContent = it.name; $('#cs').textContent = it.sub }
+  const it = vis[focus]; if (it) { const T = TH[gOf(it)]; $('#cn').textContent = it.name; $('#cs').textContent = it.sub; $('#cg').textContent = T.n; $('#cg').style.color = 'rgb(' + T.glow + ')' }
 }
 shelf.addEventListener('scroll', () => requestAnimationFrame(fx), { passive: true });
 function click(i) {
   const r = recs[i];
-  if (i !== focus) return shelf.scrollTo({ left: r.offsetLeft + 130 - shelf.clientWidth / 2, behavior: 'smooth' });
-  r.classList.add('out'); audio(); PREF.last = items[i].id; savePref();
-  setTimeout(() => { load(items[i]); show('deckV'); setTimeout(() => r.classList.remove('out'), 600) }, 480);
+  if (!grid && i !== focus) return shelf.scrollTo({ left: r.offsetLeft + 130 - shelf.clientWidth / 2, behavior: 'smooth' });
+  r.classList.add('out'); audio(); PREF.last = vis[i].id; savePref();
+  setTimeout(() => { load(vis[i]); show('deckV'); setTimeout(() => r.classList.remove('out'), 600) }, 480);
 }
 function show(id) { $('#shelfV').classList.toggle('off', id !== 'shelfV'); $('#deckV').classList.toggle('off', id !== 'deckV') }
 $('#back').onclick = () => { lift(); show('shelfV') };
@@ -200,14 +275,82 @@ const PV = { x: 860, y: 170 }, C = { x: 380, y: 380 }, L = 540, REST = 108;
 const tipDist = th => { const r = th * Math.PI / 180; return Math.hypot(PV.x + L * Math.cos(r) - C.x, PV.y + L * Math.sin(r) - C.y) };
 const findAng = r => { for (let th = 100; th < 160; th += .05) if (tipDist(th) <= r) return th; return 130 };
 const TO = findAng(292), TI = findAng(125);       // surco exterior / interior
+let pickIdx = null, trEls = [], hl = -1, side = 0, flip = 0, rpm = PREF.rpm || 33, nom = 0, lk = 0, fr = 0;
 let playing = false, pending = false, dragging = false, started = null, prog = 0, a = REST, vel = 0, t = REST, ang = 0, spd = 0;
 const gr = $('#grooves');
 for (let r = 112; r <= 296; r += 4) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', 380); c.setAttribute('cy', 380); c.setAttribute('r', r); c.setAttribute('stroke', `rgba(255,255,255,${(r % 28 < 4) ? .16 : .045})`); gr.append(c) }
 
+for (let i = 0; i < 18; i++) {   // motas de polvo sobre el vinilo
+  const c = document.createElementNS(NS, 'circle'), r = 118 + Math.random() * 176, th = Math.random() * 6.283;
+  c.setAttribute('cx', 380 + r * Math.cos(th)); c.setAttribute('cy', 380 + r * Math.sin(th)); c.setAttribute('r', .6 + Math.random() * 1.3); c.setAttribute('fill', 'rgba(255,255,255,.28)');
+  $('#rec').insertBefore(c, $('#lab'));
+}
+for (let i = 0; i < 60; i++) {   // aro estroboscópico (60 marcas)
+  const l = document.createElementNS(NS, 'line'), th = i * 6 * Math.PI / 180;
+  l.setAttribute('x1', 380 + 307 * Math.cos(th)); l.setAttribute('y1', 380 + 307 * Math.sin(th)); l.setAttribute('x2', 380 + 318 * Math.cos(th)); l.setAttribute('y2', 380 + 318 * Math.sin(th));
+  l.setAttribute('stroke', 'rgba(255,255,255,.38)'); l.setAttribute('stroke-width', 2.4); $('#strobe').append(l);
+}
+const E = { rec: $('#rec'), strobe: $('#strobe'), ash: $('#ash'), sheen: $('#sheen'), lampS: $('#lampS'), deck: $('#deckV') };
 function load(it) {
-  cur = it; playing = pending = false; started = null; prog = 0; sync = null; t = REST; setNoise(false);
+  if (!demo && (playing || pending)) spPause();
+  cur = it; playing = pending = false; started = null; prog = 0; sync = null; pickIdx = null; t = REST; setNoise(false);
   $('#lab').setAttribute('href', it.img); $('#in').textContent = it.name; $('#is').textContent = it.sub;
-  $('#hint').textContent = 'Arrastra la aguja hasta el disco';
+  const T = TH[gOf(it)]; side = 0; updSide();
+  $('#vbase').setAttribute('fill', T.v1); $('#lring').setAttribute('stroke', T.ring);
+  document.documentElement.style.setProperty('--lamp', T.glow);
+  ['#lampS', '#lampE'].forEach(q => $(q).setAttribute('stop-color', 'rgb(' + T.glow + ')'));
+  $('#tracks').innerHTML = ''; $('#tracks').style.setProperty('--ring', T.ring); trEls = [];
+  loadTracks(it).then(() => { if (cur === it) buildTracks() }).catch(() => {});
+  $('#hint').textContent = 'Suelta la aguja en un surco o elige una pista';
+}
+const RATE = () => rpm === 45 ? 270 : 200;
+function nT() { return cur.tracks ? cur.tracks.length : (cur.total || 1) }
+function half() { return Math.ceil(nT() / 2) }
+function range() { const n = nT(); if (cur.album && n > 1) { const h = half(); return side ? [h, n] : [0, h] } return [0, n] }
+function frac(i) {   // fracción del disco (por duración) donde empieza la pista i
+  const [lo, hi] = range(); if (i <= lo) return 0; if (i >= hi) return 1;
+  if (!cur.tracks) return (i - lo) / (hi - lo);
+  let tot = 0, acc = 0; for (let k = lo; k < hi; k++) { tot += cur.tracks[k].dur; if (k < i) acc += cur.tracks[k].dur } return acc / tot;
+}
+function trackAt(f) { const [lo, hi] = range(); let k = lo; while (k < hi - 1 && frac(k + 1) <= f) k++; return k }
+function updSide() { const on = cur && cur.album && nT() > 1; $('#sd').style.display = on ? '' : 'none'; $('#sd').textContent = 'Lado ' + 'AB'[side]; $('#sdl').textContent = on ? 'AB'[side] : '' }
+function fmt(ms) { return ms > 1 ? Math.floor(ms / 60000) + ':' + String(Math.floor(ms / 1000) % 60).padStart(2, '0') : '' }
+async function loadTracks(it) {
+  if (it.tracks) return;
+  if (demo) { it.tracks = Array.from({ length: it.total || 10 }, (_, i) => ({ id: 'dt' + i, name: 'Pista ' + (i + 1), dur: 180000 + (i * 17000) % 70000 })); return }
+  let out = [], url = it.album ? `/albums/${it.id}/tracks?limit=50` : `/playlists/${it.id}/tracks?limit=100`;
+  for (let k = 0; k < 6 && url; k++) {
+    let r; try { r = await api(url) } catch (e) { if (!it.album && url.includes('/tracks')) { url = url.replace('/tracks', '/items'); r = await api(url) } else throw e }
+    (r.items || []).forEach(x => { const t = it.album ? x : (x.track || x.item); out.push(t && t.id ? { id: t.id, name: t.name, dur: t.duration_ms || 1 } : { id: null, name: 'No disponible', dur: 1 }) });
+    url = r.next ? r.next.replace('https://api.spotify.com/v1', '') : null;
+  }
+  if (out.length) { it.tracks = out; it.total = out.length }
+}
+function buildTracks() {
+  const el = $('#tracks'); el.innerHTML = ''; trEls = []; hl = -2; updSide();
+  const T = cur.tracks; if (!T || !T.length) return;
+  const sides = cur.album && T.length > 1, h = Math.ceil(T.length / 2);
+  T.forEach((t, i) => {
+    if (sides && (i === 0 || i === h)) { const d = document.createElement('div'); d.className = 'th'; d.textContent = i ? 'Lado B' : 'Lado A'; el.append(d) }
+    const b = document.createElement('button'); b.className = 'tr'; b.innerHTML = '<span class="n"></span><span class="t"></span><span class="d"></span>';
+    b.children[0].textContent = i + 1; b.children[1].textContent = t.name; b.children[2].textContent = fmt(t.dur);
+    b.onclick = () => pickTrack(i); el.append(b); trEls.push(b);
+  });
+}
+function updTrack() {   // resalta la pista que suena y muestra su nombre
+  if (!cur) return;
+  const i = playing && !pending ? (demo ? trackAt(prog) : sync ? sync.i : -1) : -1;
+  if (i === hl) return; hl = i;
+  trEls.forEach((b, k) => b.classList.toggle('on', k === i));
+  $('#is').textContent = i >= 0 && cur.tracks && cur.tracks[i] ? cur.tracks[i].name : cur.sub;
+  if (i >= 0 && trEls[i]) trEls[i].scrollIntoView({ block: 'nearest' });
+}
+function pickTrack(i) {   // la aguja se levanta y baja al surco de esa pista
+  if (!cur || !cur.tracks || !cur.tracks[i] || !cur.tracks[i].id) return; audio();
+  if (cur.album && nT() > 1) { const ns = i >= half() ? 1 : 0; if (ns !== side) { side = ns; flip = 1; updSide(); thunk(150) } }
+  if (!demo && (playing || pending)) spPause();
+  playing = false; pending = true; started = null; sync = null; pickIdx = i; setNoise(false);
+  prog = frac(i); t = TO + (TI - TO) * prog; $('#hint').textContent = '';
 }
 const pt = svg.createSVGPoint();
 const toSvg = e => { pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()) };
@@ -220,17 +363,23 @@ const move = e => { const p = toSvg(e); t = Math.max(98, Math.min(152, Math.atan
 armEl.addEventListener('pointermove', e => { if (dragging) move(e) });
 const release = () => {
   if (!dragging) return; dragging = false; armEl.classList.remove('lift');
-  if (t > TO - 5 && t < TI + 3) { t = TO + (TI - TO) * (started === cur.id ? prog : 0); pending = true; $('#hint').textContent = '' } else { t = REST; $('#hint').textContent = 'Arrastra la aguja hasta el disco' }
+  if (t > TO - 5 && t < TI + 3) {
+    const f = Math.max(0, Math.min(.999, (t - TO) / (TI - TO)));
+    if (!(started === cur.id && Math.abs(f - prog) < .03)) {   // si cae donde estaba, reanuda; si no, salta a esa pista
+      const i = f < .04 ? range()[0] : trackAt(f); pickIdx = f < .04 ? null : i; prog = frac(i); started = null; sync = null;
+    }
+    t = TO + (TI - TO) * prog; pending = true; $('#hint').textContent = '';
+  } else { t = REST; $('#hint').textContent = 'Suelta la aguja en un surco o elige una pista' }
 };
 armEl.addEventListener('pointerup', release); armEl.addEventListener('pointercancel', release);
 function drop() {   // la aguja toca el vinilo → play()
-  pending = false; playing = true; pop(); setNoise(true); dropAt = performance.now(); sync = null; setTimeout(poll, 1200);
+  pending = false; playing = true; pop(); thunk(70); setNoise(true); dropAt = performance.now(); sync = null; retried = false; setTimeout(poll, 1500); setTimeout(poll, 5000);
   if (!demo) { spPlay(started === cur.id); } started = cur.id;
 }
 function lift(ext) {
   if (playing && !demo && !ext) spPause();
   playing = pending = false; t = REST; setNoise(false);
-  $('#hint').textContent = 'Arrastra la aguja hasta el disco';
+  $('#hint').textContent = 'Suelta la aguja en un surco o elige una pista';
 }
 let last = performance.now();
 (function frame(now) {
@@ -242,15 +391,26 @@ let last = performance.now();
   if (dragging) a += (t - a) * .45;
   else { vel += (180 * (t - a) - 24 * vel) * dt; a += vel * dt }      // resorte amortiguado
   if (pending && !dragging && Math.abs(a - t) < .8 && Math.abs(vel) < 20) drop();
-  spd += ((playing ? 200 : 0) - spd) * Math.min(1, dt * (playing ? 1.6 : .9));  // 33.3 RPM = 200°/s
-  ang = (ang + spd * dt) % 360;
-  $('#rec').setAttribute('transform', `rotate(${ang} 380 380)`);
-  armEl.setAttribute('transform', `translate(860 170) rotate(${a})`);
+  const wow = playing ? Math.sin(now / 1e3 * 3.5) * .006 : 0;      // wow & flutter
+  spd += ((playing ? RATE() * (1 + wow) : 0) - spd) * Math.min(1, dt * (playing ? 1.6 : .9));  // 33.3 RPM = 200°/s
+  ang = (ang + spd * dt) % 360; nom = playing ? nom + RATE() * dt : ang;
+  flip = Math.max(0, flip - dt / .7); lk += ((dragging ? 1 : 0) - lk) * Math.min(1, dt * 10);
+  const sy = Math.max(.03, Math.abs(Math.cos(flip * Math.PI))), vx = playing ? Math.sin(now / 23) * .35 : 0, vy = playing ? Math.cos(now / 29) * .3 : 0;
+  E.rec.setAttribute('transform', `translate(${380 + vx} ${380 + vy}) scale(1 ${sy}) rotate(${ang}) translate(-380 -380)`);
+  E.strobe.setAttribute('transform', `rotate(${((ang - nom) % 6 + 6) % 6} 380 380)`);
+  const aa = a + (playing ? Math.sin(now / 37) * .05 : 0);
+  armEl.setAttribute('transform', `translate(860 170) rotate(${aa})`);
+  E.ash.setAttribute('transform', `translate(${864 + 12 * lk} ${176 + 18 * lk}) rotate(${aa})`);
+  E.sheen.setAttribute('opacity', .55 + .45 * Math.min(1, spd / 200));
+  if ((fr++ & 3) === 0) {   // luz de lámpara que respira
+    const k = .17 + (playing ? .06 : 0) + Math.sin(now / 1300) * .03 + Math.sin(now / 410) * .008;
+    E.lampS.setAttribute('stop-opacity', k + .06); E.deck.style.setProperty('--la', k); updTrack();
+  }
   requestAnimationFrame(frame);
 })(last);
 
 /* ============ AUDIO ANALÓGICO (pop & crackle) ============ */
-let ac, ng;
+let ac, ng, hum;
 function audio() {
   if (ac) { ac.resume && ac.resume(); return }
   try {
@@ -260,9 +420,17 @@ function audio() {
     const s = ac.createBufferSource(); s.buffer = b; s.loop = true;
     const f = ac.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 900;
     ng = ac.createGain(); ng.gain.value = 0; s.connect(f).connect(ng).connect(ac.destination); s.start();
+    const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = 52; hum = ac.createGain(); hum.gain.value = 0; o.connect(hum).connect(ac.destination); o.start();
   } catch (e) {}
 }
-const setNoise = on => { if (ng) ng.gain.setTargetAtTime(on && PREF.crackle ? .35 : 0, ac.currentTime, .3) };
+const setNoise = on => { if (ng) { ng.gain.setTargetAtTime(on && PREF.crackle ? .35 : 0, ac.currentTime, .3); hum.gain.setTargetAtTime(on && PREF.crackle ? .02 : 0, ac.currentTime, .6) } };
+function thunk(f = 90) {   // clic mecánico del motor
+  if (!PREF.crackle) return; audio(); if (!ac) return;
+  const o = ac.createOscillator(), g = ac.createGain(), n = ac.currentTime;
+  o.frequency.setValueAtTime(f, n); o.frequency.exponentialRampToValueAtTime(40, n + .12);
+  g.gain.setValueAtTime(.35, n); g.gain.exponentialRampToValueAtTime(.001, n + .14);
+  o.connect(g).connect(ac.destination); o.start(); o.stop(n + .15);
+}
 function pop() {
   if (!ac || !PREF.crackle) return; const n = ac.sampleRate * .09, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0);
   for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (n * .12));
@@ -270,7 +438,18 @@ function pop() {
 }
 
 /* ============ ARRANQUE ============ */
-const crk = () => $('#crk').textContent = 'Crackle: ' + (PREF.crackle ? 'sí' : 'no');
+$('#q').oninput = render;
+$('#srt').onclick = () => { sortM = (sortM + 1) % 3; $('#srt').textContent = 'Orden: ' + SORTS[sortM]; render() };
+const vw = () => $('#vw').textContent = 'Vista: ' + (grid ? 'Caja' : 'Cover Flow');
+vw(); $('#vw').onclick = () => { grid = grid ? 0 : 1; PREF.grid = grid; savePref(); vw(); render() };
+$('#cg').onclick = () => {   // corrige el género de un disco con un toque
+  const it = vis[focus]; if (!it) return; const ks = Object.keys(TH);
+  (PREF.gm = PREF.gm || {})[it.id] = ks[(ks.indexOf(gOf(it)) + 1) % ks.length]; PREF.last = it.id; savePref(); render();
+};
+$('#rp').textContent = rpm + ' RPM';
+$('#rp').onclick = () => { rpm = rpm === 33 ? 45 : 33; PREF.rpm = rpm; savePref(); $('#rp').textContent = rpm + ' RPM'; thunk(120) };
+$('#sd').onclick = () => { if (!cur || !cur.album) return; lift(); side ^= 1; started = null; sync = null; prog = 0; pickIdx = null; flip = 1; updSide(); thunk(150) };
+const crk = () => $('#crk').textContent = 'Ambiente: ' + (PREF.crackle ? 'sí' : 'no');
 crk(); $('#crk').onclick = () => { PREF.crackle = !PREF.crackle; savePref(); crk(); setNoise(playing) };
 $('#login').onclick = async () => {
   if (localStorage.sp) { localStorage.removeItem('sp'); return location.reload() }
