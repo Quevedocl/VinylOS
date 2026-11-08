@@ -17,7 +17,7 @@
 html,body{height:100%;background:#000;color:#f5f5f7;font:400 15px -apple-system,"SF Pro Text","Helvetica Neue",sans-serif;overflow:hidden;overscroll-behavior:none}
 .view{position:fixed;inset:0;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1)}
 .view.off{opacity:0;pointer-events:none;transform:scale(.96)}
-.bar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px}
+.bar{position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;padding:18px 28px}
 h1{font:600 24px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.02em}
 .pill{background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);color:var(--silver);padding:9px 16px;border-radius:99px;font:600 13px -apple-system,sans-serif}
 .pill:active{opacity:.6}
@@ -31,15 +31,26 @@ h1{font:600 24px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.02em
 .cap{text-align:center;padding:0 24px 34px;min-height:84px}
 .cap b{display:block;font:600 21px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.01em}
 .cap span{color:#8e8e93}
-#deckV{background:radial-gradient(ellipse at 18% 6%,rgba(var(--lamp),var(--la,.16)),transparent 55%),#000}
+#deckV{background:radial-gradient(ellipse at 18% 6%,rgba(var(--lamp),var(--la,.16)),transparent 55%),radial-gradient(circle at 88% 92%,rgba(53,208,255,.13),transparent 42%),radial-gradient(circle at 8% 88%,rgba(255,43,214,.09),transparent 40%),linear-gradient(160deg,#1b4332,#0a1712 70%)}
 svg{flex:1;min-height:0;width:100%;touch-action:none}
+#svg{border-radius:36px;-webkit-backdrop-filter:blur(40px) saturate(150%);backdrop-filter:blur(40px) saturate(150%);background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.025));box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 0 1px 0 rgba(255,255,255,.3),0 30px 70px rgba(0,0,0,.45)}
+html.gs .vy{transition:none}
 #arm.lift{filter:drop-shadow(14px 22px 12px rgba(0,0,0,.65))}
 #arm{filter:drop-shadow(5px 8px 5px rgba(0,0,0,.6));cursor:grab}
 .info{text-align:center;padding:0 24px 26px}
 .info b{display:block;font:600 19px -apple-system,"SF Pro Display",sans-serif}
 .info span{color:#8e8e93}
-.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translate(-50%,20px);max-width:86vw;text-align:center;opacity:0;pointer-events:none;transition:.4s;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);padding:12px 18px;border-radius:16px;z-index:9}
-.toast.on{opacity:1;transform:translate(-50%,0)}
+#isl{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:50%;z-index:20;height:38px;width:38px;border-radius:99px;transform:translateX(-50%) scale(.4);opacity:0;pointer-events:none;display:flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;overflow:hidden;background:rgba(8,14,11,.55);-webkit-backdrop-filter:blur(30px) saturate(160%);backdrop-filter:blur(30px) saturate(160%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 10px 30px rgba(0,0,0,.5);transition:width .6s cubic-bezier(.34,1.4,.5,1),opacity .3s,transform .6s cubic-bezier(.34,1.4,.5,1)}
+#isl.on{opacity:1;transform:translateX(-50%) scale(1);width:138px}
+#isl.msg{width:min(88vw,360px)}
+#icv{flex:none;width:28px;height:28px;border-radius:50%;background:#222 center/cover;box-shadow:0 0 0 2px rgba(0,0,0,.6)}
+#isl.pl #icv{animation:sp 2.4s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+#itx{display:none;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 13px -apple-system,sans-serif}
+#isl.msg #itx{display:block}
+#ieq{display:none;gap:3px;align-items:center;height:16px;margin-left:auto}#isl.pl #ieq{display:flex}
+#ieq i{width:3px;height:100%;border-radius:2px;background:rgb(var(--lamp));box-shadow:0 0 8px rgb(var(--lamp));transform-origin:bottom;animation:eq .9s ease-in-out infinite}
+#ieq i:nth-child(2){animation-duration:.7s;animation-delay:-.3s}#ieq i:nth-child(3){animation-duration:1.1s;animation-delay:-.6s}#ieq i:nth-child(4){animation-duration:.8s;animation-delay:-.1s}
+@keyframes eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
 #hint{flex:1;text-align:center;color:#8e8e93;font-size:13px;padding:0 10px}
 .tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:0 28px 6px}
 .tools input{flex:1;min-width:160px;max-width:340px;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);color:#f5f5f7;padding:9px 16px;border-radius:99px;font:400 14px -apple-system,sans-serif;outline:0;-webkit-user-select:text;user-select:text}
@@ -52,19 +63,19 @@ svg{flex:1;min-height:0;width:100%;touch-action:none}
 .shelf.grid+.cap{display:none}
 .cap i{display:block;font-style:normal;font-size:12px;margin-top:5px;cursor:pointer}
 
-.stage{flex:1;display:flex;min-height:0;gap:18px;padding:0 22px}
+.stage{position:relative;flex:1;display:flex;min-height:0;gap:18px;padding:0 22px}
 .stage svg{flex:1;min-width:0;min-height:0;width:auto}
-.tracks{width:310px;flex:none;overflow-y:auto;padding:8px;margin-bottom:6px;border-radius:20px;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);scrollbar-width:none}
+.tracks{position:relative;z-index:3;width:310px;flex:none;overflow-y:auto;padding:8px;margin-bottom:6px;border-radius:20px;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);scrollbar-width:none}
 .tracks:empty{display:none}.tracks::-webkit-scrollbar{display:none}
 .th{padding:12px 12px 4px;font:600 12px -apple-system,sans-serif;color:#8e8e93}
-.tr{display:flex;width:100%;gap:12px;align-items:center;text-align:left;background:none;border:0;color:#f5f5f7;padding:11px 12px;border-radius:12px;font:400 15px -apple-system,sans-serif}
+.tr{display:flex;width:100%;gap:12px;align-items:center;text-align:left;background:none;border:0;color:#f5f5f7;min-height:44px;touch-action:manipulation;padding:11px 12px;border-radius:12px;font:400 15px -apple-system,sans-serif}
 .tr:active{background:rgba(255,255,255,.08)}
 .tr.on{background:rgba(255,255,255,.13);box-shadow:inset 3px 0 0 var(--ring,#c9a56b)}
 .tr .n{width:22px;color:#8e8e93;text-align:right;font-variant-numeric:tabular-nums}
 .tr .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tr .d{color:#8e8e93;font-variant-numeric:tabular-nums;font-size:13px}
 @media(orientation:portrait){.stage{flex-direction:column;gap:8px}.tracks{width:auto;max-height:38%}}
-@media(prefers-reduced-motion:reduce){.view,.vy{transition-duration:.01s}}
+@media(prefers-reduced-motion:reduce){.view,.vy,#isl{transition-duration:.01s}#ieq i,#isl.pl #icv{animation:none}}
 </style>
 </head>
 <body>
@@ -81,15 +92,17 @@ svg{flex:1;min-height:0;width:100%;touch-action:none}
   <div class="bar"><button class="pill" id="back">‹ Estantería</button><span id="hint">Suelta la aguja en un surco o elige una pista</span><span style="display:flex;gap:8px"><button class="pill" id="sd">Lado A</button><button class="pill" id="rp">33 RPM</button><button class="pill" id="crk">Ambiente: sí</button></span></div>
   <div class="stage"><svg id="svg" viewBox="0 0 1000 760" preserveAspectRatio="xMidYMid meet">
     <defs>
-      <linearGradient id="pl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2c2c2f"/><stop offset="1" stop-color="#131315"/></linearGradient>
+      <linearGradient id="pl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2c2c2f" stop-opacity=".38"/><stop offset="1" stop-color="#0a1712" stop-opacity=".55"/></linearGradient>
       <linearGradient id="mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8d8de"/><stop offset="1" stop-color="#7d7d84"/></linearGradient>
       <linearGradient id="sh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
       <radialGradient id="lamp" cx=".2" cy=".1" r=".95"><stop id="lampS" offset="0" stop-color="#ffaa5a" stop-opacity=".24"/><stop id="lampE" offset="1" stop-color="#ffaa5a" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gl"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset=".45" stop-color="#7fe9ff" stop-opacity=".13"/><stop offset="1" stop-color="#ff7ae0" stop-opacity="0"/></radialGradient>
+      <filter id="gf"><feColorMatrix id="gh" type="hueRotate" values="0"/></filter>
       <filter id="bl"><feGaussianBlur stdDeviation="5"/></filter>
       <clipPath id="vc"><circle cx="380" cy="380" r="300"/></clipPath>
       <clipPath id="lc"><circle cx="380" cy="380" r="100"/></clipPath>
     </defs>
-    <rect x="20" y="20" width="960" height="720" rx="40" fill="url(#pl)" stroke="#3a3a3e" stroke-width="2"/>
+    <rect x="20" y="20" width="960" height="720" rx="40" fill="url(#pl)" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
     <rect x="20" y="20" width="960" height="720" rx="40" fill="url(#lamp)" pointer-events="none"/>
     <circle cx="380" cy="380" r="326" fill="#0c0c0d" stroke="#3a3a3e" stroke-width="3"/>
     <circle cx="380" cy="380" r="318" fill="url(#mt)" opacity=".25"/>
@@ -97,7 +110,7 @@ svg{flex:1;min-height:0;width:100%;touch-action:none}
     <g id="rec"><circle id="vbase" cx="380" cy="380" r="300" fill="#0b0b0c"/><g id="grooves" fill="none"></g>
       <circle cx="380" cy="380" r="104" fill="#1c1c1e"/><image id="lab" x="280" y="280" width="200" height="200" preserveAspectRatio="xMidYMid slice" clip-path="url(#lc)"/>
       <circle id="lring" cx="380" cy="380" r="100" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2"/><text id="sdl" x="380" y="455" text-anchor="middle" font-family="-apple-system,Helvetica" font-weight="700" font-size="24" fill="#fff" stroke="rgba(0,0,0,.55)" stroke-width="4" paint-order="stroke"></text><circle cx="380" cy="380" r="8" fill="#e5e5ea"/></g>
-    <g id="sheen" clip-path="url(#vc)" pointer-events="none"><path d="M380 380 L520 90 L640 150 Z" fill="url(#sh)"/><path d="M380 380 L240 670 L120 610 Z" fill="url(#sh)"/><circle cx="380" cy="380" r="300" fill="url(#lamp)"/></g>
+    <g id="sheen" clip-path="url(#vc)" pointer-events="none"><g id="wdg"><path d="M380 380 L520 90 L640 150 Z" fill="url(#sh)"/><path d="M380 380 L240 670 L120 610 Z" fill="url(#sh)"/></g><circle id="glint" cx="380" cy="380" r="240" fill="url(#gl)" filter="url(#gf)" style="mix-blend-mode:screen"/><circle cx="380" cy="380" r="300" fill="url(#lamp)"/></g>
     <circle cx="693" cy="690" r="16" fill="#1c1c1e" stroke="#58585d" stroke-width="3"/>
     <g id="ash" opacity=".4" filter="url(#bl)" pointer-events="none"><line x1="-40" y1="0" x2="480" y2="0" stroke="#000" stroke-width="9" stroke-linecap="round"/><g transform="translate(480 0) rotate(-14)"><rect x="0" y="-13" width="66" height="26" rx="6"/></g></g>
     <circle cx="860" cy="170" r="50" fill="#1d1d20" stroke="#3a3a3e" stroke-width="3"/>
@@ -112,7 +125,8 @@ svg{flex:1;min-height:0;width:100%;touch-action:none}
   <div class="info"><b id="in"></b><span id="is"></span></div>
 </section>
 
-<div class="toast" id="toast"></div>
+<div id="isl"><div id="icv"></div><span id="itx"></span><div id="ieq"><i></i><i></i><i></i><i></i></div></div>
+<script src="vendor/gsap.min.js"></script><script src="vendor/CustomEase.min.js"></script>
 
 <script>
 /* ============ CONFIG ============ */
@@ -122,7 +136,15 @@ const CLIENT_ID = '';   // Pega aquí tu Client ID de Spotify (o la app te lo pe
 const PREF = JSON.parse(localStorage.vp || '{"crackle":true}'), savePref = () => localStorage.vp = JSON.stringify(PREF);
 const $ = s => document.querySelector(s), NS = 'http://www.w3.org/2000/svg';
 const shelf = $('#shelf'), svg = $('#svg'), armEl = $('#arm');
-let toastT; const toast = m => { const e = $('#toast'); e.textContent = m; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 4200) };
+const G = window.gsap;   // GSAP local (vendor/); si no carga, todo cae a CSS/JS nativo
+if (G && window.CustomEase) { G.registerPlugin(CustomEase); CustomEase.create('ios', 'M0,0 C0.1,0.55 0.2,1.2 0.42,1.1 0.6,1.02 0.75,0.99 1,1') }
+if (G) document.documentElement.classList.add('gs');
+const EASE = G && window.CustomEase ? 'ios' : 'back.out(1.4)';
+/* Isla dinámica: sustituye al toast */
+let islT, islMsg = false;
+const islSync = () => { const e = $('#isl'), pl = playing && !pending; e.classList.toggle('pl', pl); e.classList.toggle('on', pl || islMsg); e.classList.toggle('msg', islMsg) };
+function island(m, ms = 3200) { $('#itx').textContent = m; islMsg = true; islSync(); clearTimeout(islT); islT = setTimeout(() => { islMsg = false; islSync() }, ms) }
+const toast = m => island(m, 4200);
 const cover = (n, h) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="${NS}" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h} 70% 55%)"/><stop offset="1" stop-color="hsl(${(h + 60) % 360} 60% 16%)"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><circle cx="142" cy="58" r="38" fill="rgba(255,255,255,.14)"/><text x="14" y="184" font-family="Helvetica" font-weight="700" font-size="19" fill="#fff">${n}</text></svg>`);
 const DEMO = [['Midnight Drive', 20, 'urbano'], ['Blue Hour', 215, 'electro'], ['Paper Moon', 330, 'pop'], ['Desert Radio', 35, 'regional'], ['Low Light', 265, 'jazz'], ['Velvet Room', 350, 'urbano'], ['Sunday Rain', 190, 'rock'], ['Golden Tape', 48, 'hiphop']]
   .map(([n, h, g], i) => ({ id: 'd' + i, name: n, artist: 'Demo', sub: 'Modo demo', img: cover(n, h), g, album: 1, total: 10 }));
@@ -144,7 +166,7 @@ const gOf = it => (PREF.gm && PREF.gm[it.id]) || it.g || 'otros';
 
 /* ============ SPOTIFY (OAuth PKCE + Web API) ============ */
 const AUTH = 'https://accounts.spotify.com/authorize', TOK = 'https://accounts.spotify.com/api/token';
-const SCOPE = 'playlist-read-private user-library-read user-read-playback-state user-modify-playback-state streaming';
+const SCOPE = 'playlist-read-private user-library-read user-read-playback-state user-modify-playback-state streaming user-read-email user-read-private';
 const RU = location.origin + location.pathname, cid = () => localStorage.cid || CLIENT_ID;
 const b64 = b => btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 async function login() {
@@ -182,18 +204,35 @@ async function loadSpotify() {
     render();
   } catch (e) {}
 }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let sdkDev = null, sdkP = null;
+function initSDK() {   // reproductor fantasma: hace que este navegador aparezca como dispositivo de Spotify (Mac/PC; iOS Safari no lo soporta)
+  if ($('#sdk')) return;
+  window.onSpotifyWebPlaybackSDKReady = () => {
+    sdkP = new Spotify.Player({ name: 'VinylOS', getOAuthToken: cb => token().then(cb).catch(() => {}), volume: .8 });
+    sdkP.addListener('ready', ({ device_id }) => sdkDev = device_id); sdkP.addListener('not_ready', () => sdkDev = null);
+    ['initialization_error', 'authentication_error', 'account_error'].forEach(k => sdkP.addListener(k, () => {}));
+    sdkP.connect();
+  };
+  const sc = document.createElement('script'); sc.id = 'sdk'; sc.async = true; sc.src = 'https://sdk.scdn.co/spotify-player.js'; document.head.append(sc);
+}
 async function spPlay(resume) {
   await pausing;
   const pos = pickIdx != null ? pickIdx : (cur.album && side ? half() : 0);
   const body = resume ? undefined : JSON.stringify({ context_uri: cur.uri, position_ms: 0, ...(pos ? { offset: { position: pos } } : {}) });
-  try { await api('/me/player/play', { method: 'PUT', body }); }
-  catch (e) {
-    if (e.status === 404) {
-      const d = (await api('/me/player/devices').catch(() => ({}))).devices || [];
-      if (!d.length) { toast('Abre la app de Spotify en este iPad, reproduce algo un segundo y vuelve a soltar la aguja.'); return lift(true) }
-      await api('/me/player/play?device_id=' + (d.find(x => x.is_active) || d[0]).id, { method: 'PUT', body }).catch(() => { toast('No se pudo iniciar la reproducción.'); lift(true) });
-    } else { toast(e.status === 403 ? 'Spotify requiere una cuenta Premium para controlar la reproducción.' : 'Error de Spotify (' + e.status + ').'); lift(true) }
-  }
+  const play = d => api('/me/player/play?device_id=' + d, { method: 'PUT', body });
+  try {
+    const ds = (await api('/me/player/devices').catch(() => ({}))).devices || [];
+    const act = ds.find(x => x.is_active), tgt = act || ds.find(x => x.id === sdkDev) || ds[0] || (sdkDev && { id: sdkDev });
+    if (!tgt) { island('Abre Spotify en este dispositivo, reproduce algo un segundo y vuelve a soltar la aguja.', 6500); return lift(true) }
+    if (!act) {   // dispositivo dormido: transferir reproducción para despertarlo y encadenar el play
+      island('Despertando Spotify…', 5000);
+      await api('/me/player', { method: 'PUT', body: JSON.stringify({ device_ids: [tgt.id], play: false }) }).catch(() => {});
+      await sleep(600);
+    }
+    try { await play(tgt.id) } catch (e) { if (e.status !== 404) throw e; await sleep(900); await play(tgt.id) }
+    if (!act) island('Conectado · ' + (tgt.name || 'Spotify'), 2200);
+  } catch (e) { island(e.status === 403 ? 'Spotify requiere una cuenta Premium para controlar la reproducción.' : e.status === 404 ? 'Spotify no responde. Ábrelo un momento y vuelve a soltar la aguja.' : 'Error de Spotify (' + (e.status || '?') + ').', 6000); lift(true) }
 }
 let pausing = Promise.resolve(), retried = false;
 const spPause = () => (pausing = api('/me/player/pause', { method: 'PUT' }).catch(() => {}));
@@ -222,12 +261,12 @@ async function poll() {
 setInterval(poll, 2500);
 
 /* ============ ESTANTERÍA ============ */
-let items = DEMO, recs = [], cur = null, demo = true;
+let items = DEMO, recs = [], cur = null, demo = true, extra = [], srchSeq = 0;   // extra = resultados de Spotify que no están en tu biblioteca
 let vis = [], fG = 'all', sortM = 0, grid = PREF.grid || 0;
 const SORTS = ['biblioteca', 'artista A-Z', 'género'];
 function render() {
   const q = $('#q').value.trim().toLowerCase();
-  vis = items.filter(it => (fG === 'all' || gOf(it) === fG) && (!q || (it.name + ' ' + it.sub + ' ' + TH[gOf(it)].n).toLowerCase().includes(q)));
+  vis = (q ? [...items, ...extra] : items).filter(it => (fG === 'all' || gOf(it) === fG) && (!q || it.ext || (it.name + ' ' + it.sub + ' ' + TH[gOf(it)].n).toLowerCase().includes(q)));
   if (sortM === 1) vis.sort((a, b) => (a.artist || '~').localeCompare(b.artist || '~') || a.name.localeCompare(b.name));
   if (sortM === 2) vis.sort((a, b) => TH[gOf(a)].n.localeCompare(TH[gOf(b)].n));
   shelf.classList.toggle('grid', !!grid); shelf.innerHTML = '';
@@ -239,13 +278,13 @@ function render() {
     r.lastChild.style.backgroundImage = `url("${it.img}")`;
     r.onclick = () => click(i); shelf.append(r);
   });
-  recs = [...shelf.children]; shelf.scrollLeft = 0; shelf.scrollTop = 0;
+  recs = [...shelf.children]; if (G) recs.forEach(r => G.set(r.firstChild, { x: 0, y: 0, xPercent: grid ? 9 : 16 })); shelf.scrollLeft = 0; shelf.scrollTop = 0;
   const k = vis.findIndex(x => x.id === PREF.last);
   if (k > 0 && !grid) shelf.scrollLeft = recs[k].offsetLeft + 130 - shelf.clientWidth / 2;
-  chips(); requestAnimationFrame(fx);
+  chips(); requestAnimationFrame(fx); setTimeout(fx, 150);   // segundo cálculo tras el layout (evita estantería vacía en Safari)
 }
 function chips() {
-  const gs = ['all', ...Object.keys(TH).filter(k => items.some(i => gOf(i) === k))], c = $('#chips'); c.innerHTML = '';
+  const gs = ['all', ...Object.keys(TH).filter(k => (extra.length && $('#q').value.trim() ? [...items, ...extra] : items).some(i => gOf(i) === k))], c = $('#chips'); c.innerHTML = '';
   gs.forEach(k => { const b = document.createElement('button'); b.className = 'pill' + (k === fG ? ' on' : ''); b.textContent = k === 'all' ? 'Todos' : TH[k].n; b.onclick = () => { fG = k; render() }; c.append(b) });
 }
 let focus = 0;
@@ -253,7 +292,7 @@ function fx() {
   if (grid) return;
   const c = shelf.scrollLeft + shelf.clientWidth / 2; let bd = 1e9;
   recs.forEach((r, i) => {
-    const d = (r.offsetLeft + 130 - c) / 288, a = Math.abs(d), s = Math.max(-1, Math.min(1, d));
+    const d = (r.offsetLeft + 130 - c) / 288 || 0, a = Math.abs(d), s = Math.max(-1, Math.min(1, d));
     r.style.transform = `translateZ(${-a * 90}px) rotateY(${-s * 55 * Math.min(a, 1)}deg) scale(${1 - Math.min(a, 1.5) * .08})`;
     r.style.opacity = 1 - Math.min(a, 2.5) * .18;
     if (a < bd) { bd = a; focus = i }
@@ -265,7 +304,9 @@ function click(i) {
   const r = recs[i];
   if (!grid && i !== focus) return shelf.scrollTo({ left: r.offsetLeft + 130 - shelf.clientWidth / 2, behavior: 'smooth' });
   r.classList.add('out'); audio(); PREF.last = vis[i].id; savePref();
-  setTimeout(() => { load(vis[i]); show('deckV'); setTimeout(() => r.classList.remove('out'), 600) }, 480);
+  const vy = r.firstChild, sl = r.lastChild;
+  if (G) { G.to(vy, { xPercent: 78, duration: .8, ease: EASE }); G.fromTo(sl, { y: 0 }, { y: -12, duration: .22, yoyo: true, repeat: 1, ease: 'power2.out' }) }
+  setTimeout(() => { load(vis[i]); show('deckV'); setTimeout(() => { r.classList.remove('out'); if (G) G.to(vy, { xPercent: grid ? 9 : 16, duration: .7, ease: EASE }) }, 600) }, 480);
 }
 function show(id) { $('#shelfV').classList.toggle('off', id !== 'shelfV'); $('#deckV').classList.toggle('off', id !== 'deckV') }
 $('#back').onclick = () => { lift(); show('shelfV') };
@@ -275,6 +316,7 @@ const PV = { x: 860, y: 170 }, C = { x: 380, y: 380 }, L = 540, REST = 108;
 const tipDist = th => { const r = th * Math.PI / 180; return Math.hypot(PV.x + L * Math.cos(r) - C.x, PV.y + L * Math.sin(r) - C.y) };
 const findAng = r => { for (let th = 100; th < 160; th += .05) if (tipDist(th) <= r) return th; return 130 };
 const TO = findAng(292), TI = findAng(125);       // surco exterior / interior
+const LEAD = .025, gA = f => TO + (TI - TO) * (LEAD + (1 - LEAD) * f), fA = x => Math.max(0, Math.min(.999, ((x - TO) / (TI - TO) - LEAD) / (1 - LEAD)));   // la pista 0 empieza tras un surco de entrada, no en el borde
 let pickIdx = null, trEls = [], hl = -1, side = 0, flip = 0, rpm = PREF.rpm || 33, nom = 0, lk = 0, fr = 0;
 let playing = false, pending = false, dragging = false, started = null, prog = 0, a = REST, vel = 0, t = REST, ang = 0, spd = 0;
 const gr = $('#grooves');
@@ -290,11 +332,12 @@ for (let i = 0; i < 60; i++) {   // aro estroboscópico (60 marcas)
   l.setAttribute('x1', 380 + 307 * Math.cos(th)); l.setAttribute('y1', 380 + 307 * Math.sin(th)); l.setAttribute('x2', 380 + 318 * Math.cos(th)); l.setAttribute('y2', 380 + 318 * Math.sin(th));
   l.setAttribute('stroke', 'rgba(255,255,255,.38)'); l.setAttribute('stroke-width', 2.4); $('#strobe').append(l);
 }
-const E = { rec: $('#rec'), strobe: $('#strobe'), ash: $('#ash'), sheen: $('#sheen'), lampS: $('#lampS'), deck: $('#deckV') };
+let tx = 0, ty = 0, gx = 0, gy = 0;
+const E = { glint: $('#glint'), wdg: $('#wdg'), gh: $('#gh'), rec: $('#rec'), strobe: $('#strobe'), ash: $('#ash'), sheen: $('#sheen'), lampS: $('#lampS'), deck: $('#deckV') };
 function load(it) {
   if (!demo && (playing || pending)) spPause();
   cur = it; playing = pending = false; started = null; prog = 0; sync = null; pickIdx = null; t = REST; setNoise(false);
-  $('#lab').setAttribute('href', it.img); $('#in').textContent = it.name; $('#is').textContent = it.sub;
+  $('#lab').setAttribute('href', it.img); $('#icv').style.backgroundImage = `url("${it.img}")`; $('#in').textContent = it.name; $('#is').textContent = it.sub;
   const T = TH[gOf(it)]; side = 0; updSide();
   $('#vbase').setAttribute('fill', T.v1); $('#lring').setAttribute('stroke', T.ring);
   document.documentElement.style.setProperty('--lamp', T.glow);
@@ -350,33 +393,45 @@ function pickTrack(i) {   // la aguja se levanta y baja al surco de esa pista
   if (cur.album && nT() > 1) { const ns = i >= half() ? 1 : 0; if (ns !== side) { side = ns; flip = 1; updSide(); thunk(150) } }
   if (!demo && (playing || pending)) spPause();
   playing = false; pending = true; started = null; sync = null; pickIdx = i; setNoise(false);
-  prog = frac(i); t = TO + (TI - TO) * prog; $('#hint').textContent = '';
+  prog = frac(i); t = gA(prog); $('#hint').textContent = '';
+  if (G) G.to(Z, { z: 1, duration: .25, ease: 'power2.out', onUpdate: armFx });
 }
 const pt = svg.createSVGPoint();
 const toSvg = e => { pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()) };
 armEl.addEventListener('pointerdown', e => {
   armEl.setPointerCapture(e.pointerId); audio();
   if (playing) { playing = false; setNoise(false); if (!demo) spPause() }
+  if (dropTw) { dropTw.kill(); dropTw = null } if (G) G.to(Z, { z: 1, duration: .25, ease: EASE, onUpdate: armFx });
   dragging = true; pending = false; armEl.classList.add('lift'); move(e); e.preventDefault();
 });
 const move = e => { const p = toSvg(e); t = Math.max(98, Math.min(152, Math.atan2(p.y - PV.y, p.x - PV.x) * 180 / Math.PI)) };
 armEl.addEventListener('pointermove', e => { if (dragging) move(e) });
 const release = () => {
   if (!dragging) return; dragging = false; armEl.classList.remove('lift');
-  if (t > TO - 5 && t < TI + 3) {
-    const f = Math.max(0, Math.min(.999, (t - TO) / (TI - TO)));
+  if (t > TO - 9 && t < TI + 3) {
+    const f = fA(t), lo = range()[0];
     if (!(started === cur.id && Math.abs(f - prog) < .03)) {   // si cae donde estaba, reanuda; si no, salta a esa pista
-      const i = f < .04 ? range()[0] : trackAt(f); pickIdx = f < .04 ? null : i; prog = frac(i); started = null; sync = null;
+      const i = f < .03 ? lo : trackAt(f); pickIdx = i === lo ? null : i; prog = frac(i); started = null; sync = null;
     }
-    t = TO + (TI - TO) * prog; pending = true; $('#hint').textContent = '';
-  } else { t = REST; $('#hint').textContent = 'Suelta la aguja en un surco o elige una pista' }
+    t = gA(prog); pending = true; $('#hint').textContent = '';
+  } else { if (G) G.to(Z, { z: 0, duration: .4, ease: EASE, onUpdate: armFx }); t = REST; $('#hint').textContent = 'Suelta la aguja en un surco o elige una pista' }
 };
 armEl.addEventListener('pointerup', release); armEl.addEventListener('pointercancel', release);
-function drop() {   // la aguja toca el vinilo → play()
-  pending = false; playing = true; pop(); thunk(70); setNoise(true); dropAt = performance.now(); sync = null; retried = false; setTimeout(poll, 1500); setTimeout(poll, 5000);
+let dropTw = null; const Z = { z: 1 };   // z = altura de la aguja sobre el disco (1 arriba, 0 apoyada)
+const armFx = () => armEl.style.filter = `drop-shadow(${5 + 9 * Z.z}px ${8 + 14 * Z.z}px ${5 + 7 * Z.z}px rgba(0,0,0,${.6 + .05 * Z.z}))`;
+function drop() {   // la aguja desciende y, al tocar el vinilo, ocurre el impacto
+  pending = false;
+  if (!G) return impact();
+  dropTw = G.to(Z, { z: 0, duration: .32, ease: 'power3.in', onUpdate: armFx, onComplete: impact });
+}
+function impact() {
+  dropTw = null; if (dragging) return;
+  playing = true; pop(); slam(); setNoise(true); vel += 22; dropAt = performance.now(); sync = null; retried = false; setTimeout(poll, 1500); setTimeout(poll, 5000);
+  if (G) G.fromTo('#svg', { scale: 1 }, { scale: 1.008, duration: .09, yoyo: true, repeat: 1, ease: 'power2.out' });   // micro-zoom sincronizado con el golpe
   if (!demo) { spPlay(started === cur.id); } started = cur.id;
 }
 function lift(ext) {
+  if (dropTw) { dropTw.kill(); dropTw = null } if (G) G.to(Z, { z: 0, duration: .4, ease: EASE, onUpdate: armFx });
   if (playing && !demo && !ext) spPause();
   playing = pending = false; t = REST; setNoise(false);
   $('#hint').textContent = 'Suelta la aguja en un surco o elige una pista';
@@ -386,7 +441,7 @@ let last = performance.now();
   const dt = Math.min(.05, (now - last) / 1e3); last = now;
   if (playing && !pending) {
     if (demo) { prog += dt / 240; if (prog >= 1) { prog = 0; lift() } } else prog = progOf();
-    t = TO + (TI - TO) * Math.min(1, prog);
+    t = gA(Math.min(1, prog));
   }
   if (dragging) a += (t - a) * .45;
   else { vel += (180 * (t - a) - 24 * vel) * dt; a += vel * dt }      // resorte amortiguado
@@ -401,10 +456,12 @@ let last = performance.now();
   const aa = a + (playing ? Math.sin(now / 37) * .05 : 0);
   armEl.setAttribute('transform', `translate(860 170) rotate(${aa})`);
   E.ash.setAttribute('transform', `translate(${864 + 12 * lk} ${176 + 18 * lk}) rotate(${aa})`);
+  gx += (tx - gx) * .08; gy += (ty - gy) * .08;   // iluminación anisotrópica: el brillo sigue la inclinación
+  E.glint.setAttribute('cx', 380 + gx * 170); E.glint.setAttribute('cy', 380 + gy * 170); E.wdg.setAttribute('transform', `rotate(${gx * 22} 380 380)`);
   E.sheen.setAttribute('opacity', .55 + .45 * Math.min(1, spd / 200));
   if ((fr++ & 3) === 0) {   // luz de lámpara que respira
     const k = .17 + (playing ? .06 : 0) + Math.sin(now / 1300) * .03 + Math.sin(now / 410) * .008;
-    E.lampS.setAttribute('stop-opacity', k + .06); E.deck.style.setProperty('--la', k); updTrack();
+    E.lampS.setAttribute('stop-opacity', k + .06); E.deck.style.setProperty('--la', k); updTrack(); islSync(); E.gh.setAttribute('values', Math.round(gx * 70 + gy * 40));
   }
   requestAnimationFrame(frame);
 })(last);
@@ -431,14 +488,62 @@ function thunk(f = 90) {   // clic mecánico del motor
   g.gain.setValueAtTime(.35, n); g.gain.exponentialRampToValueAtTime(.001, n + .14);
   o.connect(g).connect(ac.destination); o.start(); o.stop(n + .15);
 }
+function slam() {   // golpe seco de la aguja: seno grave + clic filtrado
+  if (!PREF.crackle) return; audio(); if (!ac) return;
+  const n = ac.currentTime, o = ac.createOscillator(), g = ac.createGain(), lp = ac.createBiquadFilter(), nb = ac.createBuffer(1, ac.sampleRate * .05, ac.sampleRate), d = nb.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (d.length * .15));
+  const s = ac.createBufferSource(); s.buffer = nb; lp.type = 'lowpass'; lp.frequency.value = 420;
+  o.type = 'sine'; o.frequency.setValueAtTime(95, n); o.frequency.exponentialRampToValueAtTime(42, n + .2);
+  g.gain.setValueAtTime(.8, n); g.gain.exponentialRampToValueAtTime(.001, n + .24);
+  o.connect(g).connect(ac.destination); s.connect(lp).connect(g); o.start(n); o.stop(n + .26); s.start(n);
+}
 function pop() {
   if (!ac || !PREF.crackle) return; const n = ac.sampleRate * .09, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0);
   for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (n * .12));
   const s = ac.createBufferSource(), g = ac.createGain(); g.gain.value = .5; s.buffer = b; s.connect(g).connect(ac.destination); s.start();
 }
 
+/* ============ INCLINACIÓN (giroscopio en iPad, ratón en Mac) ============ */
+const tilt = (x, y) => { tx = Math.max(-1, Math.min(1, x)); ty = Math.max(-1, Math.min(1, y)) };
+addEventListener('pointermove', e => { if (e.pointerType === 'mouse') tilt(e.clientX / innerWidth * 2 - 1, e.clientY / innerHeight * 2 - 1) }, { passive: true });
+let asked = 0;
+function firstGesture() {   // iOS exige un gesto del usuario para pedir permiso de movimiento
+  if (sdkP && sdkP.activateElement) sdkP.activateElement();
+  if (asked || !window.DeviceOrientationEvent) return; asked = 1;
+  const go = () => addEventListener('deviceorientation', e => {
+    if (e.gamma == null) return; const an = (screen.orientation && screen.orientation.angle) || 0, b = (e.beta - 45) / 30, g = e.gamma / 30;
+    an === 90 ? tilt(b, -g) : an === 270 ? tilt(-b, g) : tilt(g, b);
+  });
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().then(r => r === 'granted' && go()).catch(() => {}); else go();
+}
+['pointerup', 'click'].forEach(ev => addEventListener(ev, firstGesture, true));
+
 /* ============ ARRANQUE ============ */
-$('#q').oninput = render;
+let rT, sT;
+$('#q').oninput = () => {
+  clearTimeout(rT); rT = setTimeout(render, 120); clearTimeout(sT);
+  const q = $('#q').value.trim();
+  if (q.length < 2 || demo) { srchSeq++; if (extra.length) extra = []; return }
+  sT = setTimeout(() => remoteSearch(q), 450);
+};
+async function remoteSearch(q) {   // busca en todo el catálogo de Spotify, no solo en tu biblioteca
+  const my = ++srchSeq;
+  try {
+    const r = await api('/search?' + new URLSearchParams({ q, type: 'album,playlist,track', limit: 10 }));
+    if (my !== srchSeq) return;
+    const have = new Set(items.map(i => i.id)), out = new Map();
+    const alb = (x, note) => { if (!x || !x.id || have.has(x.id) || out.has(x.id)) return; const a0 = (x.artists || [])[0] || {}; out.set(x.id, { id: x.id, name: x.name, artist: a0.name || '', aid: a0.id, sub: note || (x.artists || []).map(a => a.name).join(', '), img: (x.images || [])[0]?.url, uri: x.uri, album: 1, total: x.total_tracks, g: 'otros', ext: 1 }) };
+    ((r.albums || {}).items || []).forEach(x => alb(x));
+    ((r.tracks || {}).items || []).forEach(t => t && alb(t.album, (t.album.artists || []).map(a => a.name).join(', ') + ' · incluye «' + t.name + '»'));
+    ((r.playlists || {}).items || []).filter(Boolean).forEach(x => { if (have.has(x.id) || out.has(x.id)) return; out.set(x.id, { id: x.id, name: x.name, artist: '~', sub: 'Playlist de ' + (x.owner?.display_name || 'Spotify'), img: (x.images || [])[0]?.url, uri: x.uri, g: 'lista', total: x.tracks?.total || 0, ext: 1 }) });
+    extra = [...out.values()];
+    try {
+      const ids = [...new Set(extra.filter(i => i.aid).map(i => i.aid))].slice(0, 50);
+      if (ids.length) { const g = await api('/artists?ids=' + ids.join(',')); if (my !== srchSeq) return; g.artists.forEach(ar => extra.forEach(i => { if (i.aid === ar.id) i.g = classify(ar.genres || []) })) }
+    } catch (e) {}
+    render(); if (!vis.length) island('Sin resultados para «' + q + '»', 2500);
+  } catch (e) { if (my === srchSeq) island('No se pudo buscar en Spotify.', 3000) }
+}
 $('#srt').onclick = () => { sortM = (sortM + 1) % 3; $('#srt').textContent = 'Orden: ' + SORTS[sortM]; render() };
 const vw = () => $('#vw').textContent = 'Vista: ' + (grid ? 'Caja' : 'Cover Flow');
 vw(); $('#vw').onclick = () => { grid = grid ? 0 : 1; PREF.grid = grid; savePref(); vw(); render() };
@@ -465,7 +570,7 @@ $('#login').onclick = async () => {
     history.replaceState({}, '', RU);
   }
   if (localStorage.sp) {
-    try { await loadSpotify(); demo = false; $('#login').textContent = 'Cerrar sesión' }
+    try { await loadSpotify(); demo = false; $('#login').textContent = 'Cerrar sesión'; initSDK() }
     catch (e) { toast('No se pudo cargar tu biblioteca. Mostrando modo demo.') }
   }
 })();
