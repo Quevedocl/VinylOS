@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>VinylOS</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VinylOS">
+<meta name="theme-color" content="#000000">
+<style>
+:root{color-scheme:dark;--glass:rgba(28,28,30,.62);--silver:#e5e5ea;--space:#1c1c1e;--lamp:255,170,90}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{height:100%;background:#000;color:#f5f5f7;font:400 15px -apple-system,"SF Pro Text","Helvetica Neue",sans-serif;overflow:hidden;overscroll-behavior:none}
+.view{position:fixed;inset:0;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.view.off{opacity:0;pointer-events:none;transform:scale(.96)}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px}
+h1{font:600 24px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.02em}
+.pill{background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);color:var(--silver);padding:9px 16px;border-radius:99px;font:600 13px -apple-system,sans-serif}
+.pill:active{opacity:.6}
+.shelf{position:relative;flex:1;display:flex;align-items:center;overflow-x:auto;scroll-snap-type:x mandatory;perspective:1300px;padding:0 calc(50% - 144px);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.shelf::-webkit-scrollbar{display:none}
+.rec{flex:none;width:260px;height:260px;margin:0 14px;position:relative;scroll-snap-align:center;transform-style:preserve-3d}
+.vy{position:absolute;top:3%;left:6%;width:94%;height:94%;border-radius:50%;background:repeating-radial-gradient(circle,#0a0a0b 0 2px,#161618 3px 4px);box-shadow:0 10px 30px #000;transform:translateX(16%);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.vy::after{content:"";position:absolute;inset:36%;border-radius:50%;background:#c9a56b}
+.rec.out .vy{transform:translateX(78%)}
+.sl{position:absolute;inset:0;border-radius:6px;background-size:cover;background-position:center;box-shadow:0 22px 44px rgba(0,0,0,.75),inset 0 0 0 1px rgba(255,255,255,.1)}
+.cap{text-align:center;padding:0 24px 34px;min-height:84px}
+.cap b{display:block;font:600 21px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.01em}
+.cap span{color:#8e8e93}
+#deckV{background:radial-gradient(ellipse at 18% 6%,rgba(var(--lamp),.16),transparent 55%),#000}
+svg{flex:1;min-height:0;width:100%;touch-action:none}
+#arm.lift{filter:drop-shadow(14px 22px 12px rgba(0,0,0,.65))}
+#arm{filter:drop-shadow(5px 8px 5px rgba(0,0,0,.6));cursor:grab}
+.info{text-align:center;padding:0 24px 26px}
+.info b{display:block;font:600 19px -apple-system,"SF Pro Display",sans-serif}
+.info span{color:#8e8e93}
+.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translate(-50%,20px);max-width:86vw;text-align:center;opacity:0;pointer-events:none;transition:.4s;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);padding:12px 18px;border-radius:16px;z-index:9}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){.view,.vy{transition-duration:.01s}}
+</style>
+</head>
+<body>
+
+<section class="view" id="shelfV">
+  <div class="bar"><h1>VinylOS</h1><button class="pill" id="login">Conectar Spotify</button></div>
+  <div class="shelf" id="shelf"></div>
+  <div class="cap"><b id="cn"></b><span id="cs"></span></div>
+</section>
+
+<section class="view off" id="deckV">
+  <div class="bar"><button class="pill" id="back">‹ Estantería</button><span style="color:#8e8e93" id="hint">Arrastra la aguja hasta el disco</span><button class="pill" id="crk">Crackle: sí</button></div>
+  <svg id="svg" viewBox="0 0 1000 760" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <linearGradient id="pl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2c2c2f"/><stop offset="1" stop-color="#131315"/></linearGradient>
+      <linearGradient id="mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8d8de"/><stop offset="1" stop-color="#7d7d84"/></linearGradient>
+      <linearGradient id="sh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <radialGradient id="lamp" cx=".2" cy=".1" r=".95"><stop offset="0" stop-color="#ffaa5a" stop-opacity=".24"/><stop offset="1" stop-color="#ffaa5a" stop-opacity="0"/></radialGradient>
+      <clipPath id="vc"><circle cx="380" cy="380" r="300"/></clipPath>
+      <clipPath id="lc"><circle cx="380" cy="380" r="100"/></clipPath>
+    </defs>
+    <rect x="20" y="20" width="960" height="720" rx="40" fill="url(#pl)" stroke="#3a3a3e" stroke-width="2"/>
+    <rect x="20" y="20" width="960" height="720" rx="40" fill="url(#lamp)" pointer-events="none"/>
+    <circle cx="380" cy="380" r="326" fill="#0c0c0d" stroke="#3a3a3e" stroke-width="3"/>
+    <circle cx="380" cy="380" r="318" fill="url(#mt)" opacity=".25"/>
+    <g id="rec"><circle cx="380" cy="380" r="300" fill="#0b0b0c"/><g id="grooves" fill="none"></g>
+      <circle cx="380" cy="380" r="104" fill="#1c1c1e"/><image id="lab" x="280" y="280" width="200" height="200" preserveAspectRatio="xMidYMid slice" clip-path="url(#lc)"/>
+      <circle cx="380" cy="380" r="100" fill="none" stroke="rgba(255,255,255,.18)"/><circle cx="380" cy="380" r="8" fill="#e5e5ea"/></g>
+    <g clip-path="url(#vc)" pointer-events="none"><path d="M380 380 L520 90 L640 150 Z" fill="url(#sh)"/><path d="M380 380 L240 670 L120 610 Z" fill="url(#sh)"/><circle cx="380" cy="380" r="300" fill="url(#lamp)"/></g>
+    <circle cx="693" cy="690" r="16" fill="#1c1c1e" stroke="#58585d" stroke-width="3"/>
+    <circle cx="860" cy="170" r="50" fill="#1d1d20" stroke="#3a3a3e" stroke-width="3"/>
+    <g id="arm" transform="translate(860 170) rotate(108)">
+      <rect x="-96" y="-19" width="56" height="38" rx="9" fill="#8e8e93"/>
+      <line x1="-40" y1="0" x2="480" y2="0" stroke="#d1d1d6" stroke-width="9" stroke-linecap="round"/>
+      <g transform="translate(480 0) rotate(-14)"><rect x="0" y="-13" width="66" height="26" rx="6" fill="#e5e5ea"/><rect x="38" y="-9" width="28" height="18" rx="3" fill="#1c1c1e"/></g>
+      <circle r="21" fill="url(#mt)"/>
+      <line x1="-40" y1="0" x2="520" y2="0" stroke="transparent" stroke-width="80" id="hit"/>
+    </g>
+  </svg>
+  <div class="info"><b id="in"></b><span id="is"></span></div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ CONFIG ============ */
+const CLIENT_ID = '';   // Pega aquí tu Client ID de Spotify (o la app te lo pedirá al conectar)
+
+/* ============ UTILIDADES ============ */
+const PREF = JSON.parse(localStorage.vp || '{"crackle":true}'), savePref = () => localStorage.vp = JSON.stringify(PREF);
+const $ = s => document.querySelector(s), NS = 'http://www.w3.org/2000/svg';
+const shelf = $('#shelf'), svg = $('#svg'), armEl = $('#arm');
+let toastT; const toast = m => { const e = $('#toast'); e.textContent = m; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 4200) };
+const cover = (n, h) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="${NS}" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h} 70% 55%)"/><stop offset="1" stop-color="hsl(${(h + 60) % 360} 60% 16%)"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><circle cx="142" cy="58" r="38" fill="rgba(255,255,255,.14)"/><text x="14" y="184" font-family="Helvetica" font-weight="700" font-size="19" fill="#fff">${n}</text></svg>`);
+const DEMO = [['Midnight Drive', 20], ['Blue Hour', 215], ['Paper Moon', 330], ['Desert Radio', 35], ['Low Light', 265], ['Velvet Room', 350], ['Sunday Rain', 190], ['Golden Tape', 48]]
+  .map(([n, h], i) => ({ id: 'd' + i, name: n, sub: 'Modo demo', img: cover(n, h) }));
+
+/* ============ SPOTIFY (OAuth PKCE + Web API) ============ */
+const AUTH = 'https://accounts.spotify.com/authorize', TOK = 'https://accounts.spotify.com/api/token';
+const SCOPE = 'playlist-read-private user-library-read user-read-playback-state user-modify-playback-state streaming';
+const RU = location.origin + location.pathname, cid = () => localStorage.cid || CLIENT_ID;
+const b64 = b => btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+async function login() {
+  const v = b64(crypto.getRandomValues(new Uint8Array(48))); localStorage.cv = v;
+  const c = b64(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)));
+  location.href = AUTH + '?' + new URLSearchParams({ client_id: cid(), response_type: 'code', redirect_uri: RU, scope: SCOPE, code_challenge_method: 'S256', code_challenge: c });
+}
+async function tokReq(p) {
+  const r = await fetch(TOK, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ client_id: cid(), ...p }) });
+  if (!r.ok) throw 0; const j = await r.json();
+  const s = { a: j.access_token, r: j.refresh_token || JSON.parse(localStorage.sp || '{}').r, e: Date.now() + j.expires_in * 1e3 };
+  localStorage.sp = JSON.stringify(s); return s;
+}
+async function token() {
+  let s = JSON.parse(localStorage.sp || 'null'); if (!s) throw 0;
+  if (s.e < Date.now() + 6e4) s = await tokReq({ grant_type: 'refresh_token', refresh_token: s.r }); return s.a;
+}
+async function api(path, o = {}) {
+  const r = await fetch('https://api.spotify.com/v1' + path, { ...o, headers: { Authorization: 'Bearer ' + await token(), 'Content-Type': 'application/json' } });
+  if (!r.ok) { const e = new Error(r.status); e.status = r.status; throw e }
+  return r.status === 204 ? {} : r.json().catch(() => ({}));
+}
+async function loadSpotify() {
+  const [p, al] = await Promise.all([api('/me/playlists?limit=30'), api('/me/albums?limit=30')]);
+  items = [
+    ...al.items.map(({ album: x }) => ({ id: x.id, name: x.name, sub: x.artists.map(r => r.name).join(', '), img: x.images[0]?.url, uri: x.uri, album: 1, total: x.total_tracks })),
+    ...p.items.filter(Boolean).map(x => ({ id: x.id, name: x.name, sub: 'Playlist de ' + (x.owner?.display_name || 'Spotify'), img: x.images?.[0]?.url, uri: x.uri }))
+  ]; render();
+}
+async function spPlay(resume) {
+  const body = resume ? undefined : JSON.stringify({ context_uri: cur.uri });
+  try { await api('/me/player/play', { method: 'PUT', body }); }
+  catch (e) {
+    if (e.status === 404) {
+      const d = (await api('/me/player/devices').catch(() => ({}))).devices || [];
+      if (!d.length) { toast('Abre la app de Spotify en este iPad, reproduce algo un segundo y vuelve a soltar la aguja.'); return lift(true) }
+      await api('/me/player/play?device_id=' + d[0].id, { method: 'PUT', body }).catch(() => { toast('No se pudo iniciar la reproducción.'); lift(true) });
+    } else { toast(e.status === 403 ? 'Spotify requiere una cuenta Premium para controlar la reproducción.' : 'Error de Spotify (' + e.status + ').'); lift(true) }
+  }
+}
+const spPause = () => api('/me/player/pause', { method: 'PUT' }).catch(() => {});
+let sync = null, dropAt = 0;   // {p: ms, d: ms, n: pista, at: instante local}
+const progOf = () => {          // interpola entre consultas para mover el brazo con fluidez
+  if (!sync) return prog;
+  const p = Math.min(1, (sync.p + performance.now() - sync.at) / sync.d);
+  return cur.album && cur.total ? ((sync.n - 1) + p) / cur.total : p;
+};
+async function poll() {
+  if (demo || !playing || pending || !cur) return;
+  try {
+    const s = await api('/me/player'); if (!s.item) return;
+    const ok = s.is_playing && (!s.context || s.context.uri === cur.uri);
+    if (!ok) { if (performance.now() - dropAt > 4000) lift(true); return }
+    sync = { p: s.progress_ms, d: s.item.duration_ms, n: s.item.track_number, at: performance.now() };
+  } catch (e) {}
+}
+setInterval(poll, 2500);
+
+/* ============ ESTANTERÍA ============ */
+let items = DEMO, recs = [], cur = null, demo = true;
+function render() {
+  shelf.innerHTML = '';
+  items.forEach((it, i) => {
+    it.img = it.img || cover(it.name, i * 47 % 360);
+    const r = document.createElement('div'); r.className = 'rec';
+    r.innerHTML = '<div class="vy"></div><div class="sl"></div>';
+    r.lastChild.style.backgroundImage = `url("${it.img}")`;
+    r.onclick = () => click(i); shelf.append(r);
+  });
+  recs = [...shelf.children];
+  const k = items.findIndex(x => x.id === PREF.last);
+  shelf.scrollLeft = k > 0 ? recs[k].offsetLeft + 130 - shelf.clientWidth / 2 : 0; requestAnimationFrame(fx);
+}
+let focus = 0;
+function fx() {
+  const c = shelf.scrollLeft + shelf.clientWidth / 2; let bd = 1e9;
+  recs.forEach((r, i) => {
+    const d = (r.offsetLeft + 130 - c) / 288, a = Math.abs(d), s = Math.max(-1, Math.min(1, d));
+    r.style.transform = `translateZ(${-a * 90}px) rotateY(${-s * 55 * Math.min(a, 1)}deg) scale(${1 - Math.min(a, 1.5) * .08})`;
+    r.style.opacity = 1 - Math.min(a, 2.5) * .18;
+    if (a < bd) { bd = a; focus = i }
+  });
+  const it = items[focus]; if (it) { $('#cn').textContent = it.name; $('#cs').textContent = it.sub }
+}
+shelf.addEventListener('scroll', () => requestAnimationFrame(fx), { passive: true });
+function click(i) {
+  const r = recs[i];
+  if (i !== focus) return shelf.scrollTo({ left: r.offsetLeft + 130 - shelf.clientWidth / 2, behavior: 'smooth' });
+  r.classList.add('out'); audio(); PREF.last = items[i].id; savePref();
+  setTimeout(() => { load(items[i]); show('deckV'); setTimeout(() => r.classList.remove('out'), 600) }, 480);
+}
+function show(id) { $('#shelfV').classList.toggle('off', id !== 'shelfV'); $('#deckV').classList.toggle('off', id !== 'deckV') }
+$('#back').onclick = () => { lift(); show('shelfV') };
+
+/* ============ TOCADISCOS: física ============ */
+const PV = { x: 860, y: 170 }, C = { x: 380, y: 380 }, L = 540, REST = 108;
+const tipDist = th => { const r = th * Math.PI / 180; return Math.hypot(PV.x + L * Math.cos(r) - C.x, PV.y + L * Math.sin(r) - C.y) };
+const findAng = r => { for (let th = 100; th < 160; th += .05) if (tipDist(th) <= r) return th; return 130 };
+const TO = findAng(292), TI = findAng(125);       // surco exterior / interior
+let playing = false, pending = false, dragging = false, started = null, prog = 0, a = REST, vel = 0, t = REST, ang = 0, spd = 0;
+const gr = $('#grooves');
+for (let r = 112; r <= 296; r += 4) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', 380); c.setAttribute('cy', 380); c.setAttribute('r', r); c.setAttribute('stroke', `rgba(255,255,255,${(r % 28 < 4) ? .16 : .045})`); gr.append(c) }
+
+function load(it) {
+  cur = it; playing = pending = false; started = null; prog = 0; sync = null; t = REST; setNoise(false);
+  $('#lab').setAttribute('href', it.img); $('#in').textContent = it.name; $('#is').textContent = it.sub;
+  $('#hint').textContent = 'Arrastra la aguja hasta el disco';
+}
+const pt = svg.createSVGPoint();
+const toSvg = e => { pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()) };
+armEl.addEventListener('pointerdown', e => {
+  armEl.setPointerCapture(e.pointerId); audio();
+  if (playing) { playing = false; setNoise(false); if (!demo) spPause() }
+  dragging = true; pending = false; armEl.classList.add('lift'); move(e); e.preventDefault();
+});
+const move = e => { const p = toSvg(e); t = Math.max(98, Math.min(152, Math.atan2(p.y - PV.y, p.x - PV.x) * 180 / Math.PI)) };
+armEl.addEventListener('pointermove', e => { if (dragging) move(e) });
+const release = () => {
+  if (!dragging) return; dragging = false; armEl.classList.remove('lift');
+  if (t > TO - 5 && t < TI + 3) { t = TO + (TI - TO) * (started === cur.id ? prog : 0); pending = true; $('#hint').textContent = '' } else { t = REST; $('#hint').textContent = 'Arrastra la aguja hasta el disco' }
+};
+armEl.addEventListener('pointerup', release); armEl.addEventListener('pointercancel', release);
+function drop() {   // la aguja toca el vinilo → play()
+  pending = false; playing = true; pop(); setNoise(true); dropAt = performance.now(); sync = null; setTimeout(poll, 1200);
+  if (!demo) { spPlay(started === cur.id); } started = cur.id;
+}
+function lift(ext) {
+  if (playing && !demo && !ext) spPause();
+  playing = pending = false; t = REST; setNoise(false);
+  $('#hint').textContent = 'Arrastra la aguja hasta el disco';
+}
+let last = performance.now();
+(function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1e3); last = now;
+  if (playing && !pending) {
+    if (demo) { prog += dt / 240; if (prog >= 1) { prog = 0; lift() } } else prog = progOf();
+    t = TO + (TI - TO) * Math.min(1, prog);
+  }
+  if (dragging) a += (t - a) * .45;
+  else { vel += (180 * (t - a) - 24 * vel) * dt; a += vel * dt }      // resorte amortiguado
+  if (pending && !dragging && Math.abs(a - t) < .8 && Math.abs(vel) < 20) drop();
+  spd += ((playing ? 200 : 0) - spd) * Math.min(1, dt * (playing ? 1.6 : .9));  // 33.3 RPM = 200°/s
+  ang = (ang + spd * dt) % 360;
+  $('#rec').setAttribute('transform', `rotate(${ang} 380 380)`);
+  armEl.setAttribute('transform', `translate(860 170) rotate(${a})`);
+  requestAnimationFrame(frame);
+})(last);
+
+/* ============ AUDIO ANALÓGICO (pop & crackle) ============ */
+let ac, ng;
+function audio() {
+  if (ac) { ac.resume && ac.resume(); return }
+  try {
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    const n = ac.sampleRate * 3, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < n; i++) { d[i] = (Math.random() * 2 - 1) * .018; if (Math.random() < .00035) d[i] = (Math.random() * 2 - 1) * .7 }
+    const s = ac.createBufferSource(); s.buffer = b; s.loop = true;
+    const f = ac.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 900;
+    ng = ac.createGain(); ng.gain.value = 0; s.connect(f).connect(ng).connect(ac.destination); s.start();
+  } catch (e) {}
+}
+const setNoise = on => { if (ng) ng.gain.setTargetAtTime(on && PREF.crackle ? .35 : 0, ac.currentTime, .3) };
+function pop() {
+  if (!ac || !PREF.crackle) return; const n = ac.sampleRate * .09, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (n * .12));
+  const s = ac.createBufferSource(), g = ac.createGain(); g.gain.value = .5; s.buffer = b; s.connect(g).connect(ac.destination); s.start();
+}
+
+/* ============ ARRANQUE ============ */
+const crk = () => $('#crk').textContent = 'Crackle: ' + (PREF.crackle ? 'sí' : 'no');
+crk(); $('#crk').onclick = () => { PREF.crackle = !PREF.crackle; savePref(); crk(); setNoise(playing) };
+$('#login').onclick = async () => {
+  if (localStorage.sp) { localStorage.removeItem('sp'); return location.reload() }
+  if (!cid()) { const c = prompt('Pega tu Client ID de Spotify (lo creas en developer.spotify.com/dashboard):'); if (!c) return; localStorage.cid = c.trim() }
+  login();
+};
+(async () => {
+  render();
+  const q = new URLSearchParams(location.search);
+  if (q.get('code')) {
+    try { await tokReq({ grant_type: 'authorization_code', code: q.get('code'), redirect_uri: RU, code_verifier: localStorage.cv }) }
+    catch (e) { toast('No se pudo iniciar sesión en Spotify.') }
+    history.replaceState({}, '', RU);
+  }
+  if (localStorage.sp) {
+    try { await loadSpotify(); demo = false; $('#login').textContent = 'Cerrar sesión' }
+    catch (e) { toast('No se pudo cargar tu biblioteca. Mostrando modo demo.') }
+  }
+})();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
