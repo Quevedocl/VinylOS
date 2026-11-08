@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>VinylOS</title>
+<link rel="preconnect" href="https://api.spotify.com">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
@@ -31,7 +32,7 @@ h1{font:600 24px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.02em
 .cap{text-align:center;padding:0 24px 34px;min-height:84px}
 .cap b{display:block;font:600 21px -apple-system,"SF Pro Display",sans-serif;letter-spacing:-.01em}
 .cap span{color:#8e8e93}
-#deckV{background:radial-gradient(ellipse at 18% 6%,rgba(var(--lamp),var(--la,.16)),transparent 55%),radial-gradient(circle at 88% 92%,rgba(53,208,255,.13),transparent 42%),radial-gradient(circle at 8% 88%,rgba(255,43,214,.09),transparent 40%),linear-gradient(160deg,#1b4332,#0a1712 70%)}
+#deckV{background:radial-gradient(ellipse at 18% 6%,rgba(var(--lamp),var(--la,.16)),transparent 55%),radial-gradient(circle at 88% 92%,rgba(53,208,255,.13),transparent 42%),radial-gradient(circle at 8% 88%,rgba(255,43,214,.09),transparent 40%),linear-gradient(160deg,var(--bg1,#1b4332),#0a1712 70%)}
 svg{flex:1;min-height:0;width:100%;touch-action:none}
 #svg{border-radius:36px;-webkit-backdrop-filter:blur(40px) saturate(150%);backdrop-filter:blur(40px) saturate(150%);background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.025));box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 0 1px 0 rgba(255,255,255,.3),0 30px 70px rgba(0,0,0,.45)}
 html.gs .vy{transition:none}
@@ -264,7 +265,8 @@ setInterval(poll, 2500);
 let items = DEMO, recs = [], cur = null, demo = true, extra = [], srchSeq = 0;   // extra = resultados de Spotify que no están en tu biblioteca
 let vis = [], fG = 'all', sortM = 0, grid = PREF.grid || 0;
 const SORTS = ['biblioteca', 'artista A-Z', 'género'];
-function render() {
+function render(keep) {
+  const sl0 = shelf.scrollLeft;
   const q = $('#q').value.trim().toLowerCase();
   vis = (q ? [...items, ...extra] : items).filter(it => (fG === 'all' || gOf(it) === fG) && (!q || it.ext || (it.name + ' ' + it.sub + ' ' + TH[gOf(it)].n).toLowerCase().includes(q)));
   if (sortM === 1) vis.sort((a, b) => (a.artist || '~').localeCompare(b.artist || '~') || a.name.localeCompare(b.name));
@@ -281,6 +283,7 @@ function render() {
   recs = [...shelf.children]; if (G) recs.forEach(r => G.set(r.firstChild, { x: 0, y: 0, xPercent: grid ? 9 : 16 })); shelf.scrollLeft = 0; shelf.scrollTop = 0;
   const k = vis.findIndex(x => x.id === PREF.last);
   if (k > 0 && !grid) shelf.scrollLeft = recs[k].offsetLeft + 130 - shelf.clientWidth / 2;
+  if (keep === true && !grid) shelf.scrollLeft = sl0;
   chips(); requestAnimationFrame(fx); setTimeout(fx, 150);   // segundo cálculo tras el layout (evita estantería vacía en Safari)
 }
 function chips() {
@@ -334,15 +337,40 @@ for (let i = 0; i < 60; i++) {   // aro estroboscópico (60 marcas)
 }
 let tx = 0, ty = 0, gx = 0, gy = 0;
 const E = { glint: $('#glint'), wdg: $('#wdg'), gh: $('#gh'), rec: $('#rec'), strobe: $('#strobe'), ash: $('#ash'), sheen: $('#sheen'), lampS: $('#lampS'), deck: $('#deckV') };
+function paint(T) {
+  $('#vbase').setAttribute('fill', T.base || T.v1); $('#lring').setAttribute('stroke', T.ring);
+  const d = document.documentElement.style; d.setProperty('--lamp', T.glow); d.setProperty('--bg1', T.bg || '#1b4332');
+  ['#lampS', '#lampE'].forEach(q => $(q).setAttribute('stop-color', 'rgb(' + T.glow + ')'));
+  $('#tracks').style.setProperty('--ring', T.ring);
+}
+const thCache = new Map();
+const hsl2rgb = (h, s, l) => { const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l), f = n => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)); return [f(0), f(8), f(4)].map(v => Math.round(v * 255)) };
+function coverTheme(url) {   // color dominante de la carátula → paleta del tocadiscos
+  if (!url) return Promise.resolve(null); if (thCache.has(url)) return Promise.resolve(thCache.get(url));
+  return new Promise(res => {
+    const im = new Image(); im.crossOrigin = 'anonymous'; im.onerror = () => res(null);
+    im.onload = () => {
+      try {
+        const c = document.createElement('canvas'); c.width = c.height = 24; const x = c.getContext('2d'); x.drawImage(im, 0, 0, 24, 24);
+        const d = x.getImageData(0, 0, 24, 24).data; let R = 0, Gn = 0, B = 0, W = 0;
+        for (let i = 0; i < d.length; i += 4) { const mx = Math.max(d[i], d[i + 1], d[i + 2]), mn = Math.min(d[i], d[i + 1], d[i + 2]), sat = mx ? (mx - mn) / mx : 0, w = sat * sat * (mx / 255) + .01; R += d[i] * w; Gn += d[i + 1] * w; B += d[i + 2] * w; W += w }
+        R /= 255 * W; Gn /= 255 * W; B /= 255 * W;
+        const mx = Math.max(R, Gn, B), mn = Math.min(R, Gn, B), dl = mx - mn, l = (mx + mn) / 2;
+        let h = dl ? (mx === R ? ((Gn - B) / dl) % 6 : mx === Gn ? (B - R) / dl + 2 : (R - Gn) / dl + 4) * 60 : 0; if (h < 0) h += 360;
+        let sat = dl ? dl / (1 - Math.abs(2 * l - 1)) : 0; sat = sat < .12 ? sat : Math.max(.5, Math.min(.9, sat * 1.1));
+        const T = { ring: `hsl(${h} ${sat * 100}% 62%)`, glow: hsl2rgb(h, sat, .58).join(','), base: `hsl(${h} ${sat * 70}% 19%)`, bg: `hsl(${h} ${sat * 55}% 21%)` };
+        thCache.set(url, T); res(T);
+      } catch (e) { res(null) }   // carátula sin CORS: se queda el color del género
+    };
+    im.src = url;
+  });
+}
 function load(it) {
   if (!demo && (playing || pending)) spPause();
   cur = it; playing = pending = false; started = null; prog = 0; sync = null; pickIdx = null; t = REST; setNoise(false);
   $('#lab').setAttribute('href', it.img); $('#icv').style.backgroundImage = `url("${it.img}")`; $('#in').textContent = it.name; $('#is').textContent = it.sub;
-  const T = TH[gOf(it)]; side = 0; updSide();
-  $('#vbase').setAttribute('fill', T.v1); $('#lring').setAttribute('stroke', T.ring);
-  document.documentElement.style.setProperty('--lamp', T.glow);
-  ['#lampS', '#lampE'].forEach(q => $(q).setAttribute('stop-color', 'rgb(' + T.glow + ')'));
-  $('#tracks').innerHTML = ''; $('#tracks').style.setProperty('--ring', T.ring); trEls = [];
+  side = 0; updSide(); paint(TH[gOf(it)]); coverTheme(it.img).then(T => { if (cur === it && T) paint(T) });   // color del género y, en cuanto se lee la carátula, el del álbum
+  $('#tracks').innerHTML = ''; trEls = [];
   loadTracks(it).then(() => { if (cur === it) buildTracks() }).catch(() => {});
   $('#hint').textContent = 'Suelta la aguja en un surco o elige una pista';
 }
@@ -521,27 +549,30 @@ function firstGesture() {   // iOS exige un gesto del usuario para pedir permiso
 /* ============ ARRANQUE ============ */
 let rT, sT;
 $('#q').oninput = () => {
-  clearTimeout(rT); rT = setTimeout(render, 120); clearTimeout(sT);
+  clearTimeout(rT); rT = setTimeout(render, 60); clearTimeout(sT);
   const q = $('#q').value.trim();
   if (q.length < 2 || demo) { srchSeq++; if (extra.length) extra = []; return }
-  sT = setTimeout(() => remoteSearch(q), 450);
+  sT = setTimeout(() => remoteSearch(q), 180);
 };
+const sCache = new Map(); let sAbort = null;
 async function remoteSearch(q) {   // busca en todo el catálogo de Spotify, no solo en tu biblioteca
-  const my = ++srchSeq;
+  const my = ++srchSeq, key = q.toLowerCase();
+  if (sCache.has(key)) { extra = sCache.get(key); return render() }   // misma búsqueda de antes: instantáneo
+  if (sAbort) sAbort.abort(); sAbort = new AbortController();
   try {
-    const r = await api('/search?' + new URLSearchParams({ q, type: 'album,playlist,track', limit: 10 }));
+    const r = await api('/search?' + new URLSearchParams({ q, type: 'album,playlist,track', limit: 10 }), { signal: sAbort.signal });
     if (my !== srchSeq) return;
     const have = new Set(items.map(i => i.id)), out = new Map();
     const alb = (x, note) => { if (!x || !x.id || have.has(x.id) || out.has(x.id)) return; const a0 = (x.artists || [])[0] || {}; out.set(x.id, { id: x.id, name: x.name, artist: a0.name || '', aid: a0.id, sub: note || (x.artists || []).map(a => a.name).join(', '), img: (x.images || [])[0]?.url, uri: x.uri, album: 1, total: x.total_tracks, g: 'otros', ext: 1 }) };
     ((r.albums || {}).items || []).forEach(x => alb(x));
     ((r.tracks || {}).items || []).forEach(t => t && alb(t.album, (t.album.artists || []).map(a => a.name).join(', ') + ' · incluye «' + t.name + '»'));
     ((r.playlists || {}).items || []).filter(Boolean).forEach(x => { if (have.has(x.id) || out.has(x.id)) return; out.set(x.id, { id: x.id, name: x.name, artist: '~', sub: 'Playlist de ' + (x.owner?.display_name || 'Spotify'), img: (x.images || [])[0]?.url, uri: x.uri, g: 'lista', total: x.tracks?.total || 0, ext: 1 }) });
-    extra = [...out.values()];
+    extra = [...out.values()]; sCache.set(key, extra);
+    render(); if (!vis.length) island('Sin resultados para «' + q + '»', 2500);   // se muestran ya; el género se refina después
     try {
       const ids = [...new Set(extra.filter(i => i.aid).map(i => i.aid))].slice(0, 50);
-      if (ids.length) { const g = await api('/artists?ids=' + ids.join(',')); if (my !== srchSeq) return; g.artists.forEach(ar => extra.forEach(i => { if (i.aid === ar.id) i.g = classify(ar.genres || []) })) }
+      if (ids.length) { const g = await api('/artists?ids=' + ids.join(',')); let ch = 0; g.artists.forEach(ar => extra.forEach(i => { if (i.aid === ar.id) { const n = classify(ar.genres || []); if (n !== i.g) { i.g = n; ch = 1 } } })); if (ch && my === srchSeq) render(true) }
     } catch (e) {}
-    render(); if (!vis.length) island('Sin resultados para «' + q + '»', 2500);
   } catch (e) { if (my === srchSeq) island('No se pudo buscar en Spotify.', 3000) }
 }
 $('#srt').onclick = () => { sortM = (sortM + 1) % 3; $('#srt').textContent = 'Orden: ' + SORTS[sortM]; render() };
